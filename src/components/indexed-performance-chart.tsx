@@ -172,13 +172,16 @@ export default function IndexedPerformanceChart({
                 color: "#e5e5e5",
                 fontSize: 12,
               }}
-              labelFormatter={(ts: number) =>
-                new Date(ts).toISOString().split("T")[0]
+              labelFormatter={(ts) =>
+                new Date(Number(ts)).toISOString().split("T")[0]
               }
-              formatter={(value: number, name: string) => [
-                `${value.toFixed(1)} (${value >= 100 ? "+" : ""}${(value - 100).toFixed(1)}%)`,
-                name,
-              ]}
+              formatter={(value, name) => {
+                const v = Number(value);
+                return [
+                  `${v.toFixed(1)} (${v >= 100 ? "+" : ""}${(v - 100).toFixed(1)}%)`,
+                  String(name),
+                ];
+              }}
             />
             <Legend
               wrapperStyle={{ fontSize: 11, paddingTop: 8 }}
