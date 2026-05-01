@@ -11,6 +11,7 @@ import {
 import type { Snapshot, Holding, PrivateInvestment, TickerHistory } from "@/lib/types";
 import ActionSignalTable from "@/components/action-signal-table";
 import type { ActionSignalAsset } from "@/components/action-signal-table";
+import { useDemoMode } from "@/lib/demo-mode";
 
 function computeReturn(
   history: TickerHistory,
@@ -110,6 +111,7 @@ function buildActionSignals(
 export default function AnalyticsPage() {
   const [actionSignals, setActionSignals] = useState<ActionSignalAsset[]>([]);
   const [loading, setLoading] = useState(true);
+  const { scramble } = useDemoMode();
 
   useEffect(() => {
     async function load() {
@@ -262,10 +264,12 @@ export default function AnalyticsPage() {
     return <div className="flex min-h-[50vh] items-center justify-center text-muted">Loading...</div>;
   }
 
+  const scrambledSignals = actionSignals.map((a) => ({ ...a, value: scramble(a.value) }));
+
   return (
     <div className="space-y-8">
       <h1 className="text-2xl font-extrabold tracking-tight">Analytics</h1>
-      <ActionSignalTable assets={actionSignals} />
+      <ActionSignalTable assets={scrambledSignals} />
     </div>
   );
 }
