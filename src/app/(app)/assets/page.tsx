@@ -525,24 +525,15 @@ function AccountCard({ account, prices, fxRate, onRefresh }: { account: Account;
         <p className="text-xs text-muted">No holdings yet.</p>
       ) : (
         <div className="overflow-x-auto">
-        <table className="w-full min-w-[600px] text-sm table-fixed">
-          <colgroup>
-            <col className="w-[22%]" />
-            <col className="w-[12%]" />
-            <col className="w-[10%]" />
-            <col className="w-[10%]" />
-            <col className="w-[12%]" />
-            <col className="w-[22%]" />
-            <col className="w-[12%]" />
-          </colgroup>
+        <table className="w-full min-w-[600px] text-sm whitespace-nowrap">
           <thead>
             <tr className="border-b border-card-border text-left text-xs text-muted">
               <th className="pb-2">Name</th>
-              <th className="pb-2">Ticker</th>
-              <th className="pb-2">Type</th>
-              <th className="pb-2">Risk</th>
-              <th className="pb-2 text-right">Shares</th>
-              <th className="pb-2 text-right">Value</th>
+              <th className="pb-2 px-2">Ticker</th>
+              <th className="pb-2 px-2">Type</th>
+              <th className="pb-2 px-2">Risk</th>
+              <th className="pb-2 px-2 text-right">Shares</th>
+              <th className="pb-2 px-2 text-right">Value</th>
               <th className="pb-2"></th>
             </tr>
           </thead>
@@ -552,17 +543,17 @@ function AccountCard({ account, prices, fxRate, onRefresh }: { account: Account;
               .sort((a, b) => (a.asset_type === "cash" ? 1 : 0) - (b.asset_type === "cash" ? 1 : 0))
               .map((h) => (
                 <tr key={h.id} className="border-b border-card-border last:border-0">
-                  <td className="py-2 font-medium truncate">{h.name}</td>
-                  <td className="py-2 text-muted">{h.ticker}</td>
-                  <td className="py-2 text-xs text-muted">{h.asset_type}</td>
-                  <td className="py-2"><span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${riskBadge[h.risk_level]}`}>{riskLabels[h.risk_level]}</span></td>
-                  <td className="py-2 text-right tabular-nums">{h.shares.toLocaleString()}</td>
-                  <td className="py-2 text-right tabular-nums font-medium">
+                  <td className="py-2 font-medium">{h.name}</td>
+                  <td className="py-2 px-2 text-muted">{h.ticker}</td>
+                  <td className="py-2 px-2 text-xs text-muted">{h.asset_type}</td>
+                  <td className="py-2 px-2"><span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${riskBadge[h.risk_level]}`}>{riskLabels[h.risk_level]}</span></td>
+                  <td className="py-2 px-2 text-right tabular-nums">{h.shares.toLocaleString()}</td>
+                  <td className="py-2 px-2 text-right tabular-nums font-medium">
                     {h.asset_type === "cash" || prices[h.ticker] != null
                       ? formatCurrency(getValue(h), h.currency)
                       : <span className="text-muted">—</span>}
                   </td>
-                  <td className="py-2 text-right space-x-1">
+                  <td className="py-2 pl-2 text-right">
                     <button onClick={() => setEditingId(h.id)} className={editBtnClass}>Edit</button>
                   </td>
                 </tr>
@@ -782,41 +773,32 @@ export default function ManagePage() {
                 )}
                 {items.length > 0 && (
                 <div className="overflow-x-auto">
-                <table className="w-full min-w-[600px] text-sm table-fixed">
-                  <colgroup>
-                    <col className="w-[26%]" />
-                    <col className="w-[10%]" />
-                    <col className="w-[10%]" />
-                    <col className="w-[10%]" />
-                    <col className="w-[14%]" />
-                    <col className="w-[22%]" />
-                    <col className="w-[8%]" />
-                  </colgroup>
+                <table className="w-full min-w-[600px] text-sm whitespace-nowrap">
                   <thead>
                     <tr className="border-b border-card-border text-left text-xs text-muted">
                       <th className="pb-2">Name</th>
-                      <th className="pb-2">Ticker</th>
-                      <th className="pb-2">Type</th>
-                      <th className="pb-2">Risk</th>
-                      <th className="pb-2 text-right">Quantity</th>
-                      <th className="pb-2 text-right">Value</th>
+                      <th className="pb-2 px-2">Ticker</th>
+                      <th className="pb-2 px-2">Type</th>
+                      <th className="pb-2 px-2">Risk</th>
+                      <th className="pb-2 px-2 text-right">Quantity</th>
+                      <th className="pb-2 px-2 text-right">Value</th>
                       <th className="pb-2"></th>
                     </tr>
                   </thead>
                   <tbody>
                     {items.map((inv) => (
                         <tr key={inv.id} className="border-b border-card-border last:border-0">
-                          <td className="py-2 font-medium truncate">{inv.name}</td>
-                          <td className="py-2 text-muted">{inv.ticker ?? "—"}</td>
-                          <td className="py-2 text-xs text-muted">{inv.asset_type}</td>
-                          <td className="py-2"><span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${riskBadge[inv.risk_level]}`}>{riskLabels[inv.risk_level]}</span></td>
-                          <td className="py-2 text-right tabular-nums">
+                          <td className="py-2 font-medium">{inv.name}</td>
+                          <td className="py-2 px-2 text-muted">{inv.ticker ?? "—"}</td>
+                          <td className="py-2 px-2 text-xs text-muted">{inv.asset_type}</td>
+                          <td className="py-2 px-2"><span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${riskBadge[inv.risk_level]}`}>{riskLabels[inv.risk_level]}</span></td>
+                          <td className="py-2 px-2 text-right tabular-nums">
                             {inv.quantity.toLocaleString()}{inv.unit_label ? ` ${inv.unit_label}` : ""}
                           </td>
-                          <td className="py-2 text-right tabular-nums font-medium">
+                          <td className="py-2 px-2 text-right tabular-nums font-medium">
                             {formatCurrency(getInvValue(inv), inv.currency)}
                           </td>
-                          <td className="py-2 text-right">
+                          <td className="py-2 pl-2 text-right">
                             <button onClick={() => setEditingInvId(inv.id)} className={editBtnClass}>Edit</button>
                           </td>
                         </tr>
