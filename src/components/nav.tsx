@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useDemoMode } from "@/lib/demo-mode";
 
 const links = [
   { href: "/dashboard", label: "Dashboard" },
@@ -12,6 +13,7 @@ const links = [
 
 export default function Nav() {
   const pathname = usePathname();
+  const { isDemoMode } = useDemoMode();
 
   return (
     <nav className="bg-card px-4 py-3 sm:py-4 shadow-[0_0_0_1px_var(--card-border)]">
@@ -37,6 +39,11 @@ export default function Nav() {
             );
           })}
         </div>
+        {isDemoMode && (
+          <span className="rounded-full bg-warning/20 px-3 py-1 text-xs font-semibold text-[#7a6400]">
+            Demo
+          </span>
+        )}
       </div>
     </nav>
   );
