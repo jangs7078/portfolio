@@ -601,7 +601,7 @@ export default function ManagePage() {
       </div>
 
       {/* Section Toggle */}
-      <div className="flex gap-2">
+      <div className="flex gap-6 border-b border-card-border">
         {[
           { key: "holdings" as const, label: "Holdings" },
           { key: "private" as const, label: "Private Investments" },
@@ -609,10 +609,10 @@ export default function ManagePage() {
           <button
             key={s.key}
             onClick={() => setSection(s.key)}
-            className={`rounded-full px-4 py-2 text-sm transition-all ${
+            className={`relative pb-3 text-sm transition-colors ${
               section === s.key
-                ? "bg-accent text-accent-dark font-semibold"
-                : "text-muted hover:text-foreground hover:scale-105 active:scale-95"
+                ? "text-foreground font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-accent after:rounded-full"
+                : "text-muted hover:text-foreground"
             }`}
           >
             {s.label}
