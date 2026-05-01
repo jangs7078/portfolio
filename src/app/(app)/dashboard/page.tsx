@@ -404,13 +404,21 @@ export default function DashboardPage() {
         try {
           const histSnapshots = await getSnapshotHistoryByTicker(uniqueNonCash);
 
-          // Group by ticker, aggregate value_usd by date
-          const grouped: Record<string, Record<string, { usd: number; hasNative: boolean }>> = {};
+          // Group by ticker — use price_per_unit (not value_usd) so returns
+          // reflect actual price movement, not position size changes from buying more shares
+          const grouped: Record<string, Record<string, { price: number | null; hasNative: boolean }>> = {};
           for (const snap of histSnapshots) {
             if (!grouped[snap.ticker]) grouped[snap.ticker] = {};
             const byDate = grouped[snap.ticker];
-            if (!byDate[snap.date]) byDate[snap.date] = { usd: 0, hasNative: false };
-            byDate[snap.date].usd += Number(snap.value_usd);
+            // Take the first non-null price_per_unit per date per ticker
+            if (!byDate[snap.date]) {
+              byDate[snap.date] = {
+                price: snap.price_per_unit != null ? Number(snap.price_per_unit) : null,
+                hasNative: false,
+              };
+            } else if (byDate[snap.date].price === null && snap.price_per_unit != null) {
+              byDate[snap.date].price = Number(snap.price_per_unit);
+            }
             if (Number(snap.value_native) > 0) byDate[snap.date].hasNative = true;
           }
 
@@ -420,13 +428,17 @@ export default function DashboardPage() {
             const values: number[] = [];
             let firstBoughtDate: string | null = null;
             for (const date of sortedDates) {
+              const price = byDate[date].price;
+              if (price == null || price <= 0) continue; // skip dates without a valid price
               dates.push(date);
-              values.push(byDate[date].usd);
+              values.push(price);
               if (firstBoughtDate === null && byDate[date].hasNative) {
                 firstBoughtDate = date;
               }
             }
-            tickerHistory[ticker] = { dates, values, firstBoughtDate };
+            if (dates.length > 0) {
+              tickerHistory[ticker] = { dates, values, firstBoughtDate };
+            }
           }
         } catch {
           // Fall back to empty
