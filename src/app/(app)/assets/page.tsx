@@ -22,6 +22,7 @@ import type {
   Currency,
   RiskLevel,
 } from "@/lib/types";
+import { useDemoMode } from "@/lib/demo-mode";
 
 // ── Dialog Modal ──
 
@@ -468,6 +469,7 @@ function AccountCard({ account, prices, fxRate, onRefresh }: { account: Account;
   const [showAddHolding, setShowAddHolding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const { scramble } = useDemoMode();
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -480,15 +482,22 @@ function AccountCard({ account, prices, fxRate, onRefresh }: { account: Account;
 
 
   const getValue = (h: Holding) => {
-    if (h.asset_type === "cash") return h.shares;
+    if (h.asset_type === "cash") return scramble(h.shares);
     const price = prices[h.ticker];
     if (price == null) return 0;
-    return price * h.shares;
+    return scramble(price * h.shares);
   };
 
   // Convert all holdings to USD for the account total
   const getValueUsd = (h: Holding) => {
-    const native = getValue(h);
+    if (h.asset_type === "cash") {
+      const native = scramble(h.shares);
+      if (h.currency === "KRW" && fxRate) return native / fxRate;
+      return native;
+    }
+    const price = prices[h.ticker];
+    if (price == null) return 0;
+    const native = scramble(price * h.shares);
     if (h.currency === "KRW" && fxRate) return native / fxRate;
     return native;
   };
@@ -556,7 +565,7 @@ function AccountCard({ account, prices, fxRate, onRefresh }: { account: Account;
                   <td className="py-2 px-2 text-muted truncate">{h.ticker}</td>
                   <td className="py-2 px-2 text-xs text-muted">{h.asset_type}</td>
                   <td className="py-2 px-2"><span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${riskBadge[h.risk_level]}`}>{riskLabels[h.risk_level]}</span></td>
-                  <td className="py-2 px-2 text-right tabular-nums">{h.shares.toLocaleString()}</td>
+                  <td className="py-2 px-2 text-right tabular-nums">{scramble(h.shares).toLocaleString()}</td>
                   <td className="py-2 px-2 text-right tabular-nums font-medium">
                     {h.asset_type === "cash" || prices[h.ticker] != null
                       ? formatCurrency(getValue(h), h.currency)
@@ -608,6 +617,7 @@ export default function ManagePage() {
   const [editingInvId, setEditingInvId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [pricesLoading, setPricesLoading] = useState(false);
+  const { scramble } = useDemoMode();
 
   const fetchPrices = useCallback(async () => {
     const [allHoldings, allInvestments] = await Promise.all([
@@ -671,9 +681,9 @@ export default function ManagePage() {
   // For private investments with COMEX tickers, use live prices if available
   const getInvValue = (inv: PrivateInvestment) => {
     if (inv.ticker && prices[inv.ticker] != null) {
-      return prices[inv.ticker]! * inv.quantity;
+      return scramble(prices[inv.ticker]! * inv.quantity);
     }
-    return inv.quantity * inv.price_per_unit;
+    return scramble(inv.quantity * inv.price_per_unit);
   };
 
   const getInvValueUsd = (inv: PrivateInvestment) => {
@@ -811,7 +821,7 @@ export default function ManagePage() {
                           <td className="py-2 px-2 text-xs text-muted">{inv.asset_type}</td>
                           <td className="py-2 px-2"><span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${riskBadge[inv.risk_level]}`}>{riskLabels[inv.risk_level]}</span></td>
                           <td className="py-2 px-2 text-right tabular-nums">
-                            {inv.quantity.toLocaleString()}{inv.unit_label ? ` ${inv.unit_label}` : ""}
+                            {scramble(inv.quantity).toLocaleString()}{inv.unit_label ? ` ${inv.unit_label}` : ""}
                           </td>
                           <td className="py-2 px-2 text-right tabular-nums font-medium">
                             {formatCurrency(getInvValue(inv), inv.currency)}
