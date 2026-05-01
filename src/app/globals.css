@@ -1,35 +1,172 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0f;
-  --foreground: #e5e5e5;
-  --card: #111118;
-  --card-border: #1e1e2a;
-  --muted: #71717a;
-  --accent: #3b82f6;
-  --accent-hover: #2563eb;
-  --positive: #22c55e;
-  --negative: #ef4444;
-  --warning: #eab308;
+  /* ── Brand ── */
+  --wise-black: #0e0f0c;
+  --wise-green: #9fe870;
+  --wise-green-dark: #163300;
+  --wise-green-light: #e2f6d5;
+  --wise-green-pastel: #cdffad;
+
+  /* ── Semantic ── */
+  --positive: #054d28;
+  --negative: #d03238;
+  --warning: #ffd11a;
+  --info: rgba(56, 200, 255, 0.10);
+  --bright-orange: #ffc091;
+
+  /* ── Neutral ── */
+  --warm-dark: #454745;
+  --gray: #868685;
+  --light-surface: #e8ebe6;
+
+  /* ── Surface (light theme) ── */
+  --background: #ffffff;
+  --foreground: #0e0f0c;
+  --card: #ffffff;
+  --card-border: rgba(14, 15, 12, 0.12);
+  --muted: #868685;
+
+  /* ── Shadows ── */
+  --shadow-ring: rgba(14, 15, 12, 0.12) 0px 0px 0px 1px;
+  --shadow-inset: rgb(134, 134, 133) 0px 0px 0px 1px inset;
 }
 
 @theme inline {
+  /* ── Colors ── */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-border: var(--card-border);
   --color-muted: var(--muted);
-  --color-accent: var(--accent);
-  --color-accent-hover: var(--accent-hover);
+
+  --color-accent: var(--wise-green);
+  --color-accent-hover: var(--wise-green-pastel);
+  --color-accent-dark: var(--wise-green-dark);
+  --color-accent-light: var(--wise-green-light);
+
+  --color-wise-black: var(--wise-black);
+  --color-wise-green: var(--wise-green);
+  --color-wise-green-dark: var(--wise-green-dark);
+  --color-wise-green-light: var(--wise-green-light);
+  --color-wise-green-pastel: var(--wise-green-pastel);
+
   --color-positive: var(--positive);
   --color-negative: var(--negative);
   --color-warning: var(--warning);
-  --font-sans: var(--font-geist-sans);
+  --color-info: var(--info);
+  --color-bright-orange: var(--bright-orange);
+
+  --color-warm-dark: var(--warm-dark);
+  --color-gray: var(--gray);
+  --color-light-surface: var(--light-surface);
+
+  /* ── Typography ── */
+  --font-sans: var(--font-inter), "Inter", Helvetica, Arial, sans-serif;
   --font-mono: var(--font-geist-mono);
+  --font-display: "Wise Sans", var(--font-inter), "Inter", sans-serif;
+
+  --font-size-xs: 0.75rem;     /* 12px — Small */
+  --font-size-sm: 0.875rem;    /* 14px — Caption */
+  --font-size-base: 1.125rem;  /* 18px — Body */
+  --font-size-lg: 1.375rem;    /* 22px — Feature Title */
+  --font-size-xl: 1.625rem;    /* 26px — Card Title */
+  --font-size-2xl: 2.5rem;     /* 40px — Sub-heading */
+  --font-size-3xl: 4rem;       /* 64px — Section Heading */
+  --font-size-4xl: 6rem;       /* 96px — Display Hero */
+  --font-size-5xl: 7.875rem;   /* 126px — Display Mega */
+
+  --line-height-xs: 1.0;
+  --line-height-sm: 1.5;
+  --line-height-base: 1.44;
+  --line-height-tight: 1.25;
+  --line-height-display: 0.85;
+
+  --letter-spacing-tight: -0.396px;
+  --letter-spacing-body: 0.18px;
+  --letter-spacing-caption: -0.084px;
+
+  /* ── Spacing (8px base unit) ── */
+  --spacing-0_5: 1px;
+  --spacing-1: 2px;
+  --spacing-1_5: 3px;
+  --spacing-2: 4px;
+  --spacing-2_5: 5px;
+  --spacing-3: 8px;
+  --spacing-4: 10px;
+  --spacing-4_5: 11px;
+  --spacing-5: 12px;
+  --spacing-6: 16px;
+  --spacing-7: 18px;
+  --spacing-7_5: 19px;
+  --spacing-8: 20px;
+  --spacing-9: 22px;
+  --spacing-10: 24px;
+
+  /* ── Border Radius ── */
+  --radius-sm: 2px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 30px;
+  --radius-3xl: 40px;
+  --radius-mega: 1000px;
+  --radius-pill: 9999px;
+
+  /* ── Shadows ── */
+  --shadow-ring: var(--shadow-ring);
+  --shadow-inset: var(--shadow-inset);
+
+  /* ── Breakpoints ── */
+  --breakpoint-mobile: 576px;
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-tablet: 992px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1440px;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-weight: 600;
+  font-feature-settings: "calt";
+}
+
+/* ── Wise Utility Classes ── */
+
+.wise-card {
+  border-radius: 16px;
+  background: var(--card);
+  box-shadow: 0 0 0 1px var(--card-border);
+}
+
+.wise-btn {
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: transform 150ms ease, opacity 150ms ease;
+}
+
+.wise-btn:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.wise-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.wise-btn:disabled {
+  opacity: 0.5;
+}
+
+.wise-input {
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+  background: var(--background);
+  outline: none;
+}
+
+.wise-input:focus {
+  border-color: var(--wise-green);
 }

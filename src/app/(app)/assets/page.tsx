@@ -40,30 +40,30 @@ function AddAccountForm({ onSave, onCancel }: { onSave: () => void; onCancel: ()
   };
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-lg border border-accent/30 bg-card p-4 space-y-3">
+    <form onSubmit={handleSubmit} className="wise-card ring-1 ring-accent/30 p-5 space-y-3">
       <h3 className="text-sm font-medium">New Account</h3>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <input placeholder="Account name" value={name} onChange={(e) => setName(e.target.value)} required
-          className="rounded border border-card-border bg-background px-2 py-1.5 text-sm outline-none focus:border-accent" />
+          className="wise-input px-2 py-1.5 text-sm" />
         <select value={type} onChange={(e) => setType(e.target.value)}
-          className="rounded border border-card-border bg-background px-2 py-1.5 text-sm outline-none focus:border-accent">
+          className="wise-input px-2 py-1.5 text-sm">
           <option value="checking">Checking</option>
           <option value="savings">Savings</option>
           <option value="brokerage">Brokerage</option>
           <option value="401k">401(k)</option>
         </select>
         <select value={country} onChange={(e) => setCountry(e.target.value)}
-          className="rounded border border-card-border bg-background px-2 py-1.5 text-sm outline-none focus:border-accent">
+          className="wise-input px-2 py-1.5 text-sm">
           <option value="US">US</option>
           <option value="KR">KR</option>
         </select>
       </div>
       <div className="flex gap-2">
         <button type="submit" disabled={saving}
-          className="rounded bg-accent px-3 py-1 text-xs font-medium text-white hover:bg-accent-hover disabled:opacity-50">
+          className="wise-btn bg-accent px-4 py-1.5 text-sm font-medium text-accent-dark">
           {saving ? "Saving..." : "Save"}
         </button>
-        <button type="button" onClick={onCancel} className="rounded px-3 py-1 text-xs text-muted hover:text-foreground">Cancel</button>
+        <button type="button" onClick={onCancel} className="rounded-full px-4 py-1.5 text-sm text-muted hover:text-foreground">Cancel</button>
       </div>
     </form>
   );
@@ -95,14 +95,14 @@ function AddHoldingForm({ accountId, onSave, onCancel }: { accountId: string; on
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-3 rounded border border-accent/30 p-3 space-y-3">
+    <form onSubmit={handleSubmit} className="mt-3 wise-card ring-1 ring-accent/30 p-5 space-y-3">
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-6">
         <input placeholder="Ticker" value={ticker} onChange={(e) => setTicker(e.target.value)} required
-          className="rounded border border-card-border bg-background px-2 py-1.5 text-xs outline-none focus:border-accent" />
+          className="wise-input px-2 py-1.5 text-xs" />
         <input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required
-          className="rounded border border-card-border bg-background px-2 py-1.5 text-xs outline-none focus:border-accent" />
+          className="wise-input px-2 py-1.5 text-xs" />
         <select value={assetType} onChange={(e) => setAssetType(e.target.value as HoldingAssetType)}
-          className="rounded border border-card-border bg-background px-2 py-1.5 text-xs outline-none focus:border-accent">
+          className="wise-input px-2 py-1.5 text-xs">
           <option value="stock">Stock</option>
           <option value="etf">ETF</option>
           <option value="index">Index</option>
@@ -111,14 +111,14 @@ function AddHoldingForm({ accountId, onSave, onCancel }: { accountId: string; on
           <option value="cash">Cash</option>
         </select>
         <input placeholder="Shares" type="number" step="any" value={shares} onChange={(e) => setShares(e.target.value)} required
-          className="rounded border border-card-border bg-background px-2 py-1.5 text-xs outline-none focus:border-accent" />
+          className="wise-input px-2 py-1.5 text-xs" />
         <select value={currency} onChange={(e) => setCurrency(e.target.value as Currency)}
-          className="rounded border border-card-border bg-background px-2 py-1.5 text-xs outline-none focus:border-accent">
+          className="wise-input px-2 py-1.5 text-xs">
           <option value="USD">USD</option>
           <option value="KRW">KRW</option>
         </select>
         <select value={riskLevel} onChange={(e) => setRiskLevel(e.target.value as RiskLevel)}
-          className="rounded border border-card-border bg-background px-2 py-1.5 text-xs outline-none focus:border-accent">
+          className="wise-input px-2 py-1.5 text-xs">
           <option value="low">Low</option>
           <option value="medium">Medium</option>
           <option value="high">High</option>
@@ -127,10 +127,10 @@ function AddHoldingForm({ accountId, onSave, onCancel }: { accountId: string; on
       </div>
       <div className="flex gap-2">
         <button type="submit" disabled={saving}
-          className="rounded bg-accent px-3 py-1 text-xs font-medium text-white hover:bg-accent-hover disabled:opacity-50">
+          className="wise-btn bg-accent px-4 py-1.5 text-sm font-medium text-accent-dark">
           {saving ? "Saving..." : "Save"}
         </button>
-        <button type="button" onClick={onCancel} className="rounded px-3 py-1 text-xs text-muted hover:text-foreground">Cancel</button>
+        <button type="button" onClick={onCancel} className="rounded-full px-4 py-1.5 text-sm text-muted hover:text-foreground">Cancel</button>
       </div>
     </form>
   );
@@ -163,11 +163,11 @@ function EditHoldingRow({ holding, onSave, onCancel }: { holding: Holding; onSav
       <td className="py-2 font-medium">{holding.ticker}</td>
       <td className="py-2">
         <input value={name} onChange={(e) => setName(e.target.value)}
-          className="w-full rounded border border-card-border bg-background px-1.5 py-0.5 text-sm outline-none focus:border-accent" />
+          className="w-full wise-input px-1.5 py-0.5 text-sm" />
       </td>
       <td className="py-2">
         <select value={assetType} onChange={(e) => setAssetType(e.target.value as HoldingAssetType)}
-          className="rounded border border-card-border bg-background px-1 py-0.5 text-xs outline-none focus:border-accent">
+          className="wise-input px-1 py-0.5 text-xs">
           <option value="stock">Stock</option>
           <option value="etf">ETF</option>
           <option value="index">Index</option>
@@ -178,7 +178,7 @@ function EditHoldingRow({ holding, onSave, onCancel }: { holding: Holding; onSav
       </td>
       <td className="py-2">
         <select value={riskLevel} onChange={(e) => setRiskLevel(e.target.value as RiskLevel)}
-          className="rounded border border-card-border bg-background px-1 py-0.5 text-xs outline-none focus:border-accent">
+          className="wise-input px-1 py-0.5 text-xs">
           <option value="low">Low</option>
           <option value="medium">Medium</option>
           <option value="high">High</option>
@@ -225,32 +225,32 @@ function EditInvestmentRow({ inv, onSave, onCancel }: { inv: PrivateInvestment; 
   };
 
   return (
-    <div className="rounded border border-accent/30 p-3 space-y-2">
+    <div className="wise-card ring-1 ring-accent/30 p-5 space-y-2">
       <div className="grid grid-cols-2 gap-2">
         <div>
           <label className="text-[10px] uppercase text-muted">Name</label>
           <input value={name} onChange={(e) => setName(e.target.value)}
-            className="w-full rounded border border-card-border bg-background px-2 py-1 text-sm outline-none focus:border-accent" />
+            className="w-full wise-input px-2 py-1 text-sm" />
         </div>
         <div>
           <label className="text-[10px] uppercase text-muted">Price per unit</label>
           <input type="number" step="any" value={pricePerUnit} onChange={(e) => setPricePerUnit(e.target.value)}
-            className="w-full rounded border border-card-border bg-background px-2 py-1 text-sm outline-none focus:border-accent" />
+            className="w-full wise-input px-2 py-1 text-sm" />
         </div>
         <div>
           <label className="text-[10px] uppercase text-muted">Quantity</label>
           <input type="number" step="any" value={quantity} onChange={(e) => setQuantity(e.target.value)}
-            className="w-full rounded border border-card-border bg-background px-2 py-1 text-sm outline-none focus:border-accent" />
+            className="w-full wise-input px-2 py-1 text-sm" />
         </div>
         <div>
           <label className="text-[10px] uppercase text-muted">Ticker</label>
           <input value={ticker} onChange={(e) => setTicker(e.target.value)}
-            className="w-full rounded border border-card-border bg-background px-2 py-1 text-sm outline-none focus:border-accent" />
+            className="w-full wise-input px-2 py-1 text-sm" />
         </div>
         <div>
           <label className="text-[10px] uppercase text-muted">Risk</label>
           <select value={riskLevel} onChange={(e) => setRiskLevel(e.target.value as RiskLevel)}
-            className="w-full rounded border border-card-border bg-background px-2 py-1 text-sm outline-none focus:border-accent">
+            className="w-full wise-input px-2 py-1 text-sm">
             <option value="low">Low</option>
             <option value="medium">Medium</option>
             <option value="high">High</option>
@@ -261,7 +261,7 @@ function EditInvestmentRow({ inv, onSave, onCancel }: { inv: PrivateInvestment; 
       <div>
         <label className="text-[10px] uppercase text-muted">Notes</label>
         <input value={notes} onChange={(e) => setNotes(e.target.value)}
-          className="w-full rounded border border-card-border bg-background px-2 py-1 text-sm outline-none focus:border-accent" />
+          className="w-full wise-input px-2 py-1 text-sm" />
       </div>
       <div className="flex gap-2">
         <button onClick={handleSubmit} disabled={saving} className={saveBtnClass}>
@@ -307,26 +307,26 @@ function AddInvestmentForm({ defaultType, onSave, onCancel }: { defaultType?: Pr
   };
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-lg border border-accent/30 bg-card p-4 space-y-3">
+    <form onSubmit={handleSubmit} className="wise-card ring-1 ring-accent/30 p-5 space-y-3">
       <h3 className="text-sm font-medium">New Private Investment</h3>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <select value={assetType} onChange={(e) => setAssetType(e.target.value as PrivateAssetType)}
-          className="rounded border border-card-border bg-background px-2 py-1.5 text-sm outline-none focus:border-accent">
+          className="wise-input px-2 py-1.5 text-sm">
           <option value="stock">Stock (Private)</option>
           <option value="lp">LP Fund</option>
           <option value="commodity">Commodity</option>
         </select>
         <input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required
-          className="rounded border border-card-border bg-background px-2 py-1.5 text-sm outline-none focus:border-accent" />
+          className="wise-input px-2 py-1.5 text-sm" />
         <input placeholder="Price per unit" type="number" step="any" value={value} onChange={(e) => setValue(e.target.value)} required
-          className="rounded border border-card-border bg-background px-2 py-1.5 text-sm outline-none focus:border-accent" />
+          className="wise-input px-2 py-1.5 text-sm" />
         <select value={currency} onChange={(e) => setCurrency(e.target.value as Currency)}
-          className="rounded border border-card-border bg-background px-2 py-1.5 text-sm outline-none focus:border-accent">
+          className="wise-input px-2 py-1.5 text-sm">
           <option value="USD">USD</option>
           <option value="KRW">KRW</option>
         </select>
         <select value={riskLevel} onChange={(e) => setRiskLevel(e.target.value as RiskLevel)}
-          className="rounded border border-card-border bg-background px-2 py-1.5 text-sm outline-none focus:border-accent">
+          className="wise-input px-2 py-1.5 text-sm">
           <option value="low">Low</option>
           <option value="medium">Medium</option>
           <option value="high">High</option>
@@ -335,37 +335,37 @@ function AddInvestmentForm({ defaultType, onSave, onCancel }: { defaultType?: Pr
         {isCommodity && (
           <>
             <input placeholder="Quantity (e.g. 150)" type="number" step="any" value={quantity} onChange={(e) => setQuantity(e.target.value)}
-              className="rounded border border-card-border bg-background px-2 py-1.5 text-sm outline-none focus:border-accent" />
+              className="wise-input px-2 py-1.5 text-sm" />
             <input placeholder="Unit (e.g. oz)" value={unitLabel} onChange={(e) => setUnitLabel(e.target.value)}
-              className="rounded border border-card-border bg-background px-2 py-1.5 text-sm outline-none focus:border-accent" />
+              className="wise-input px-2 py-1.5 text-sm" />
             <input placeholder="COMEX ticker (e.g. SI)" value={ticker} onChange={(e) => setTicker(e.target.value)}
-              className="rounded border border-card-border bg-background px-2 py-1.5 text-sm outline-none focus:border-accent" />
+              className="wise-input px-2 py-1.5 text-sm" />
           </>
         )}
       </div>
       <textarea placeholder="Notes" value={notes} onChange={(e) => setNotes(e.target.value)} rows={2}
-        className="w-full rounded border border-card-border bg-background px-2 py-1.5 text-sm outline-none focus:border-accent" />
+        className="w-full wise-input px-2 py-1.5 text-sm" />
       <div className="flex gap-2">
         <button type="submit" disabled={saving}
-          className="rounded bg-accent px-3 py-1 text-xs font-medium text-white hover:bg-accent-hover disabled:opacity-50">
+          className="wise-btn bg-accent px-4 py-1.5 text-sm font-medium text-accent-dark">
           {saving ? "Saving..." : "Save"}
         </button>
-        <button type="button" onClick={onCancel} className="rounded px-3 py-1 text-xs text-muted hover:text-foreground">Cancel</button>
+        <button type="button" onClick={onCancel} className="rounded-full px-4 py-1.5 text-sm text-muted hover:text-foreground">Cancel</button>
       </div>
     </form>
   );
 }
 
 // ── Shared button styles ──
-const editBtnClass = "rounded bg-accent/15 px-2 py-0.5 text-xs font-medium text-accent transition-colors hover:bg-accent/25";
-const saveBtnClass = "rounded bg-accent px-2 py-0.5 text-xs font-medium text-white hover:bg-accent-hover disabled:opacity-50";
-const cancelBtnClass = "rounded px-2 py-0.5 text-xs text-muted hover:text-foreground";
+const editBtnClass = "wise-btn bg-accent-dark/8 px-4 py-1.5 text-sm font-medium text-accent";
+const saveBtnClass = "wise-btn bg-accent px-4 py-1.5 text-sm font-medium text-accent-dark";
+const cancelBtnClass = "rounded-full px-4 py-1.5 text-sm text-muted hover:text-foreground";
 
-const riskColors: Record<RiskLevel, string> = {
-  low: "text-green-400",
-  medium: "text-yellow-400",
-  high: "text-orange-400",
-  very_high: "text-red-400",
+const riskBadge: Record<RiskLevel, string> = {
+  low: "bg-accent-light text-warm-dark",
+  medium: "bg-warning/20 text-[#7a6400]",
+  high: "bg-bright-orange/40 text-[#8b4000]",
+  very_high: "bg-negative/20 text-negative",
 };
 
 const riskLabels: Record<RiskLevel, string> = {
@@ -409,7 +409,7 @@ function AccountCard({ account, prices, fxRate, onRefresh }: { account: Account;
   const accountTotalUsd = holdings.reduce((sum, h) => sum + getValueUsd(h), 0);
 
   return (
-    <div className="rounded-lg border border-card-border bg-card p-4">
+    <div className="wise-card p-5">
       <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <h3 className="font-medium">{account.name}</h3>
@@ -427,7 +427,7 @@ function AccountCard({ account, prices, fxRate, onRefresh }: { account: Account;
         </div>
         <div className="flex items-center gap-2">
           <button onClick={() => setShowAddHolding(true)}
-            className="rounded-md bg-accent px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-accent-hover">
+            className="wise-btn bg-accent px-5 py-2 text-sm font-medium text-accent-dark">
             + Add Holding
           </button>
         </div>
@@ -477,7 +477,7 @@ function AccountCard({ account, prices, fxRate, onRefresh }: { account: Account;
                   <td className="py-2 font-medium truncate">{h.name}</td>
                   <td className="py-2 text-muted">{h.ticker}</td>
                   <td className="py-2 text-xs text-muted">{h.asset_type}</td>
-                  <td className={`py-2 text-xs font-medium ${riskColors[h.risk_level]}`}>{riskLabels[h.risk_level]}</td>
+                  <td className="py-2"><span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${riskBadge[h.risk_level]}`}>{riskLabels[h.risk_level]}</span></td>
                   <td className="py-2 text-right tabular-nums">{h.shares.toLocaleString()}</td>
                   <td className="py-2 text-right tabular-nums font-medium">
                     {h.asset_type === "cash" || prices[h.ticker] != null
@@ -594,14 +594,14 @@ export default function ManagePage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex items-center gap-3">
-        <h1 className="text-2xl font-bold">Assets</h1>
+        <h1 className="text-2xl font-extrabold tracking-tight">Assets</h1>
         {pricesLoading && <span className="text-xs text-muted">Fetching prices...</span>}
       </div>
 
       {/* Section Toggle */}
-      <div className="flex gap-1 border-b border-card-border pb-px">
+      <div className="flex gap-2">
         {[
           { key: "holdings" as const, label: "Holdings" },
           { key: "private" as const, label: "Private Investments" },
@@ -609,10 +609,10 @@ export default function ManagePage() {
           <button
             key={s.key}
             onClick={() => setSection(s.key)}
-            className={`border-b-2 px-4 py-2 text-sm transition-colors ${
+            className={`rounded-full px-4 py-2 text-sm transition-all ${
               section === s.key
-                ? "border-accent text-accent"
-                : "border-transparent text-muted hover:text-foreground"
+                ? "bg-accent text-accent-dark font-semibold"
+                : "text-muted hover:text-foreground hover:scale-105 active:scale-95"
             }`}
           >
             {s.label}
@@ -660,7 +660,7 @@ export default function ManagePage() {
           {(["stock", "lp", "commodity"] as const).map((type) => {
             const items = groupedInvestments[type];
             return (
-              <div key={type} className="rounded-lg border border-card-border bg-card p-4">
+              <div key={type} className="wise-card p-5">
                 <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                     <h3 className="font-medium">{groupLabels[type]}</h3>
@@ -683,7 +683,7 @@ export default function ManagePage() {
                   </div>
                   <button
                     onClick={() => setAddingInvType(type)}
-                    className="rounded-md bg-accent px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-accent-hover"
+                    className="wise-btn bg-accent px-5 py-2 text-sm font-medium text-accent-dark"
                   >
                     + Add
                   </button>
@@ -731,7 +731,7 @@ export default function ManagePage() {
                           <td className="py-2 font-medium truncate">{inv.name}</td>
                           <td className="py-2 text-muted">{inv.ticker ?? "—"}</td>
                           <td className="py-2 text-xs text-muted">{inv.asset_type}</td>
-                          <td className={`py-2 text-xs font-medium ${riskColors[inv.risk_level]}`}>{riskLabels[inv.risk_level]}</td>
+                          <td className="py-2"><span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${riskBadge[inv.risk_level]}`}>{riskLabels[inv.risk_level]}</span></td>
                           <td className="py-2 text-right tabular-nums">
                             {inv.quantity.toLocaleString()}{inv.unit_label ? ` ${inv.unit_label}` : ""}
                           </td>

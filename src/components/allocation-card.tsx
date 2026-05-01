@@ -11,13 +11,13 @@ interface Slice {
 }
 
 const DEFAULT_COLORS = [
-  "#3b82f6",
-  "#8b5cf6",
-  "#06b6d4",
-  "#22c55e",
-  "#eab308",
-  "#ef4444",
-  "#f97316",
+  "#9fe870",
+  "#38c8ff",
+  "#ffc091",
+  "#b49cff",
+  "#ffd11a",
+  "#ff7eb3",
+  "#54d7b0",
 ];
 
 export default function AllocationCard({
@@ -28,8 +28,8 @@ export default function AllocationCard({
   slices: Slice[];
 }) {
   return (
-    <div className="rounded-lg border border-card-border bg-card p-4">
-      <h2 className="mb-3 text-sm font-medium text-muted">{title}</h2>
+    <div className="wise-card p-5">
+      <h2 className="mb-3 text-sm font-semibold tracking-wide uppercase text-muted">{title}</h2>
       <div className="flex flex-col items-center gap-4 sm:flex-row">
         {/* Pie Chart */}
         <div className="h-28 w-28 shrink-0 sm:h-32 sm:w-32">
@@ -62,7 +62,7 @@ export default function AllocationCard({
             <div key={s.label} className="flex items-center justify-between text-xs">
               <div className="flex items-center gap-2 min-w-0">
                 <span
-                  className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
+                  className="inline-block h-3 w-3 shrink-0 rounded-full"
                   style={{
                     backgroundColor: s.color ?? DEFAULT_COLORS[i % DEFAULT_COLORS.length],
                   }}

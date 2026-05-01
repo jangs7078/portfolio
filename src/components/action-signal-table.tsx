@@ -17,11 +17,11 @@ interface Props {
   assets: ActionSignalAsset[];
 }
 
-const riskColors: Record<string, string> = {
-  Low: "text-positive",
-  Medium: "text-accent",
-  High: "text-warning",
-  "Very High": "text-negative",
+const riskBadge: Record<string, string> = {
+  Low: "bg-accent-light text-warm-dark",
+  Medium: "bg-warning/20 text-[#7a6400]",
+  High: "bg-bright-orange/40 text-[#8b4000]",
+  "Very High": "bg-negative/20 text-negative",
 };
 
 function ReturnCell({ value, className = "" }: { value: number | null; className?: string }) {
@@ -45,25 +45,25 @@ export default function ActionSignalTable({ assets }: Props) {
   });
 
   return (
-    <div className="rounded-lg border border-card-border bg-card p-4">
-      <h2 className="mb-3 text-sm font-medium text-muted">Asset Performance</h2>
+    <div className="wise-card p-5">
+      <h2 className="mb-3 text-sm font-semibold text-muted">Asset Performance</h2>
       <div className="overflow-x-auto">
         <table className="w-full text-left">
           <thead>
-            <tr className="border-b border-card-border text-xs text-muted">
-              <th className="px-2 py-1.5 font-medium">Name</th>
-              <th className="hidden px-2 py-1.5 font-medium sm:table-cell">Ticker</th>
-              <th className="hidden px-2 py-1.5 text-right font-medium sm:table-cell">Value</th>
-              <th className="px-2 py-1.5 text-right font-medium">Since Bought</th>
-              <th className="hidden px-2 py-1.5 text-right font-medium md:table-cell">1W</th>
-              <th className="px-2 py-1.5 text-right font-medium">1M</th>
-              <th className="hidden px-2 py-1.5 text-right font-medium md:table-cell">3M</th>
-              <th className="hidden px-2 py-1.5 font-medium sm:table-cell">Risk</th>
+            <tr className="border-b border-card-border/30 text-xs text-muted">
+              <th className="px-2 py-1.5 font-semibold">Name</th>
+              <th className="hidden px-2 py-1.5 font-semibold sm:table-cell">Ticker</th>
+              <th className="hidden px-2 py-1.5 text-right font-semibold sm:table-cell">Value</th>
+              <th className="px-2 py-1.5 text-right font-semibold">Since Bought</th>
+              <th className="hidden px-2 py-1.5 text-right font-semibold md:table-cell">1W</th>
+              <th className="px-2 py-1.5 text-right font-semibold">1M</th>
+              <th className="hidden px-2 py-1.5 text-right font-semibold md:table-cell">3M</th>
+              <th className="hidden px-2 py-1.5 font-semibold sm:table-cell">Risk</th>
             </tr>
           </thead>
           <tbody>
             {sorted.map((asset) => (
-              <tr key={asset.ticker} className="border-b border-card-border/50">
+              <tr key={asset.ticker} className="border-b border-card-border/20">
                 <td className="px-2 py-1.5 text-xs font-medium truncate max-w-32">{asset.name}</td>
                 <td className="hidden px-2 py-1.5 text-xs text-muted sm:table-cell">{asset.ticker}</td>
                 <td className="hidden px-2 py-1.5 text-right text-xs text-muted sm:table-cell">
@@ -74,7 +74,7 @@ export default function ActionSignalTable({ assets }: Props) {
                 <ReturnCell value={asset.return1M} />
                 <ReturnCell value={asset.return3M} className="hidden md:table-cell" />
                 <td className="hidden px-2 py-1.5 sm:table-cell">
-                  <span className={`text-xs font-medium ${riskColors[asset.riskLevel] ?? "text-muted"}`}>
+                  <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${riskBadge[asset.riskLevel] ?? "bg-muted/15 text-muted"}`}>
                     {asset.riskLevel}
                   </span>
                 </td>

@@ -71,10 +71,10 @@ function buildAllocByRisk(
   investments: PrivateInvestment[],
 ) {
   const colors: Record<string, string> = {
-    Low: "#22c55e",
-    Medium: "#3b82f6",
-    High: "#eab308",
-    "Very High": "#ef4444",
+    Low: "#e2f6d5",
+    Medium: "#ffd11a",
+    High: "#ffc091",
+    "Very High": "#d03238",
   };
   const holdingMap = new Map(holdings.map((h) => [h.id, h]));
   const invMap = new Map(investments.map((i) => [i.id, i]));
@@ -284,13 +284,13 @@ export default function DashboardPage() {
   const allocByCurrency = buildAllocByCurrency(currentSnapshots);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Net Worth Header + FX Rate */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="text-sm text-muted">Total Net Worth</p>
-          <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-3">
-            <h1 className="text-3xl font-bold tabular-nums sm:text-4xl">
+          <p className="mb-1 text-sm font-semibold uppercase tracking-wider text-muted">Total Net Worth</p>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-3">
+            <h1 className="text-4xl font-extrabold tracking-tight tabular-nums sm:text-5xl">
               {formatCurrency(primaryTotal, primaryCurrency)}
             </h1>
             <span
@@ -301,7 +301,7 @@ export default function DashboardPage() {
               today
             </span>
           </div>
-          <p className="mt-1 text-lg tabular-nums text-muted">
+          <p className="mt-1 text-xl font-medium tabular-nums text-muted">
             {formatCurrency(secondaryTotal, secondaryCurrency)}
           </p>
         </div>
@@ -314,7 +314,7 @@ export default function DashboardPage() {
       <NetWorthChart data={chartHistory} defaultRange={settings.timeRange} />
 
       {/* Allocation Cards */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-5 md:grid-cols-3">
         <AllocationCard title="By Asset Class" slices={allocByClass} />
         <AllocationCard title="By Risk Level" slices={allocByRisk} />
         <AllocationCard title="By Currency" slices={allocByCurrency} />

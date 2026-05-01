@@ -84,18 +84,18 @@ export default function NetWorthChart({ data, defaultRange = "ALL" }: Props) {
   }, [filtered]);
 
   return (
-    <div className="rounded-lg border border-card-border bg-card p-4">
+    <div className="wise-card p-5">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-sm font-medium text-muted">Net Worth</h2>
-        <div className="flex gap-1">
+        <div className="flex gap-2">
           {ranges.map((r) => (
             <button
               key={r}
               onClick={() => setRange(r)}
-              className={`rounded px-2 py-0.5 text-xs transition-colors ${
+              className={`rounded-full px-4 py-1.5 text-sm transition-all ${
                 range === r
-                  ? "bg-accent/15 text-accent"
-                  : "text-muted hover:text-foreground"
+                  ? "bg-accent text-accent-dark font-semibold"
+                  : "text-muted hover:text-foreground hover:scale-105 active:scale-95"
               }`}
             >
               {r}
@@ -108,12 +108,12 @@ export default function NetWorthChart({ data, defaultRange = "ALL" }: Props) {
           <AreaChart data={filtered}>
             <defs>
               <linearGradient id="netWorthGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.3} />
-                <stop offset="100%" stopColor="#3b82f6" stopOpacity={0} />
+                <stop offset="0%" stopColor="#9fe870" stopOpacity={0.3} />
+                <stop offset="100%" stopColor="#9fe870" stopOpacity={0} />
               </linearGradient>
               <linearGradient id="krwGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#22c55e" stopOpacity={0.15} />
-                <stop offset="100%" stopColor="#22c55e" stopOpacity={0} />
+                <stop offset="0%" stopColor="#38c8ff" stopOpacity={0.15} />
+                <stop offset="100%" stopColor="#38c8ff" stopOpacity={0} />
               </linearGradient>
             </defs>
             <XAxis
@@ -121,7 +121,7 @@ export default function NetWorthChart({ data, defaultRange = "ALL" }: Props) {
               type="number"
               scale="time"
               domain={["dataMin", "dataMax"]}
-              tick={{ fill: "#71717a", fontSize: 11 }}
+              tick={{ fill: "#868685", fontSize: 11 }}
               axisLine={false}
               tickLine={false}
               tickFormatter={(ts: number) => {
@@ -132,7 +132,7 @@ export default function NetWorthChart({ data, defaultRange = "ALL" }: Props) {
             <YAxis
               yAxisId="usd"
               domain={[usdMin, usdMax]}
-              tick={{ fill: "#3b82f6", fontSize: 11 }}
+              tick={{ fill: "#9fe870", fontSize: 11 }}
               axisLine={false}
               tickLine={false}
               tickFormatter={(v) => `$${(v / 1_000_000).toFixed(1)}M`}
@@ -142,7 +142,7 @@ export default function NetWorthChart({ data, defaultRange = "ALL" }: Props) {
               yAxisId="krw"
               orientation="right"
               domain={[krwMin, krwMax]}
-              tick={{ fill: "#22c55e", fontSize: 11 }}
+              tick={{ fill: "#38c8ff", fontSize: 11 }}
               axisLine={false}
               tickLine={false}
               tickFormatter={formatKrwAxis}
@@ -150,10 +150,11 @@ export default function NetWorthChart({ data, defaultRange = "ALL" }: Props) {
             />
             <Tooltip
               contentStyle={{
-                background: "#111118",
-                border: "1px solid #1e1e2a",
-                borderRadius: 8,
-                color: "#e5e5e5",
+                background: "#ffffff",
+                border: "none",
+                borderRadius: 16,
+                boxShadow: "0 0 0 1px rgba(14, 15, 12, 0.12)",
+                color: "#0e0f0c",
                 fontSize: 13,
               }}
               formatter={(value, name) => {
@@ -162,13 +163,13 @@ export default function NetWorthChart({ data, defaultRange = "ALL" }: Props) {
                 return [formatCurrency(v, "KRW"), "KRW"];
               }}
               labelFormatter={(ts) => new Date(Number(ts)).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
-              labelStyle={{ color: "#71717a" }}
+              labelStyle={{ color: "#868685" }}
             />
             <Area
               yAxisId="usd"
               type="monotone"
               dataKey="value"
-              stroke="#3b82f6"
+              stroke="#9fe870"
               strokeWidth={2}
               fill="url(#netWorthGrad)"
             />
@@ -176,7 +177,7 @@ export default function NetWorthChart({ data, defaultRange = "ALL" }: Props) {
               yAxisId="krw"
               type="monotone"
               dataKey="valueKrw"
-              stroke="#22c55e"
+              stroke="#38c8ff"
               strokeWidth={2}
               fill="url(#krwGrad)"
             />

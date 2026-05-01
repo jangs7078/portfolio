@@ -23,10 +23,10 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Settings</h1>
+    <div className="space-y-8">
+      <h1 className="text-2xl font-extrabold tracking-tight">Settings</h1>
 
-      <section className="rounded-lg border border-card-border bg-card p-4">
+      <section className="wise-card p-5">
         <h2 className="mb-4 text-sm font-medium uppercase tracking-wider text-muted">
           Display
         </h2>
@@ -36,15 +36,15 @@ export default function SettingsPage() {
               <p className="font-medium">Default Currency</p>
               <p className="text-xs text-muted">Currency shown on dashboard</p>
             </div>
-            <div className="flex gap-1">
+            <div className="flex gap-2">
               {currencies.map((c) => (
                 <button
                   key={c}
                   onClick={() => setSetting("currency", c)}
-                  className={`rounded px-3 py-1 text-sm transition-colors ${
+                  className={`rounded-full px-4 py-1.5 text-sm transition-all ${
                     settings.currency === c
-                      ? "bg-accent/15 text-accent"
-                      : "border border-card-border text-muted hover:text-foreground"
+                      ? "bg-accent text-accent-dark font-semibold"
+                      : "text-muted hover:text-foreground hover:scale-105 active:scale-95"
                   }`}
                 >
                   {c}
@@ -57,15 +57,15 @@ export default function SettingsPage() {
               <p className="font-medium">Default Time Range</p>
               <p className="text-xs text-muted">Chart time range on load</p>
             </div>
-            <div className="flex gap-1">
+            <div className="flex gap-2">
               {timeRanges.map((r) => (
                 <button
                   key={r}
                   onClick={() => setSetting("timeRange", r)}
-                  className={`rounded px-2 py-1 text-sm transition-colors ${
+                  className={`rounded-full px-4 py-1.5 text-sm transition-all ${
                     settings.timeRange === r
-                      ? "bg-accent/15 text-accent"
-                      : "border border-card-border text-muted hover:text-foreground"
+                      ? "bg-accent text-accent-dark font-semibold"
+                      : "text-muted hover:text-foreground hover:scale-105 active:scale-95"
                   }`}
                 >
                   {r}
@@ -76,7 +76,7 @@ export default function SettingsPage() {
         </div>
       </section>
 
-      <section className="rounded-lg border border-card-border bg-card p-4">
+      <section className="wise-card p-5">
         <h2 className="mb-4 text-sm font-medium uppercase tracking-wider text-muted">
           Account
         </h2>
@@ -88,7 +88,7 @@ export default function SettingsPage() {
           <button
             onClick={handlePasswordReset}
             disabled={resetStatus === "sending" || resetStatus === "sent"}
-            className="rounded border border-card-border px-3 py-1 text-sm text-muted transition-colors hover:text-foreground disabled:opacity-50"
+            className="wise-btn border border-card-border px-5 py-2 text-sm text-muted"
           >
             {resetStatus === "idle" && "Reset Password"}
             {resetStatus === "sending" && "Sending..."}
