@@ -23,7 +23,55 @@ import type {
   RiskLevel,
 } from "@/lib/types";
 
-// ── Inline Form Components ──
+// ── Dialog Modal ──
+
+function DialogModal({ title, badge, onClose, children }: { title: string; badge?: string; onClose: () => void; children: React.ReactNode }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/50" onClick={onClose}>
+      <div className="w-full max-w-sm mx-4 rounded-2xl bg-background p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center gap-2">
+            <h3 className="text-base font-bold text-foreground">{title}</h3>
+            {badge && <span className="text-[11px] font-semibold bg-accent-light text-accent-dark px-2 py-0.5 rounded-full">{badge}</span>}
+          </div>
+          <button onClick={onClose} className="w-7 h-7 rounded-full bg-surface flex items-center justify-center text-muted hover:text-foreground text-sm">✕</button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function DialogSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="mb-4">
+      <div className="text-[10px] font-semibold uppercase tracking-wider text-muted mb-2 pb-1 border-b border-card-border/30">{title}</div>
+      {children}
+    </div>
+  );
+}
+
+function DialogField({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <label className="block text-[10px] font-medium text-muted mb-1">{label}</label>
+      {children}
+    </div>
+  );
+}
+
+function DialogActions({ saving, onCancel }: { saving: boolean; onCancel: () => void }) {
+  return (
+    <div className="flex gap-2 mt-5">
+      <button type="button" onClick={onCancel} className="flex-1 rounded-full py-2.5 border border-card-border text-sm font-medium text-muted hover:text-foreground">Cancel</button>
+      <button type="submit" disabled={saving} className="flex-1 rounded-full py-2.5 bg-accent text-sm font-semibold text-accent-dark">{saving ? "Saving..." : "Save"}</button>
+    </div>
+  );
+}
+
+const fieldClass = "w-full px-3 py-2 border border-card-border/50 rounded-xl text-sm font-[Inter] text-foreground bg-background outline-none focus:border-accent";
+
+// ── Form Components ──
 
 function AddAccountForm({ onSave, onCancel }: { onSave: () => void; onCancel: () => void }) {
   const [name, setName] = useState("");
@@ -40,32 +88,34 @@ function AddAccountForm({ onSave, onCancel }: { onSave: () => void; onCancel: ()
   };
 
   return (
-    <form onSubmit={handleSubmit} className="wise-card ring-1 ring-accent/30 p-5 space-y-3">
-      <h3 className="text-sm font-medium">New Account</h3>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <input placeholder="Account name" value={name} onChange={(e) => setName(e.target.value)} required
-          className="wise-input px-2 py-1.5 text-sm" />
-        <select value={type} onChange={(e) => setType(e.target.value)}
-          className="wise-input px-2 py-1.5 text-sm">
-          <option value="checking">Checking</option>
-          <option value="savings">Savings</option>
-          <option value="brokerage">Brokerage</option>
-          <option value="401k">401(k)</option>
-        </select>
-        <select value={country} onChange={(e) => setCountry(e.target.value)}
-          className="wise-input px-2 py-1.5 text-sm">
-          <option value="US">US</option>
-          <option value="KR">KR</option>
-        </select>
-      </div>
-      <div className="flex gap-2">
-        <button type="submit" disabled={saving}
-          className="wise-btn bg-accent px-4 py-1.5 text-sm font-medium text-accent-dark">
-          {saving ? "Saving..." : "Save"}
-        </button>
-        <button type="button" onClick={onCancel} className="rounded-full px-4 py-1.5 text-sm text-muted hover:text-foreground">Cancel</button>
-      </div>
-    </form>
+    <DialogModal title="New Account" onClose={onCancel}>
+      <form onSubmit={handleSubmit}>
+        <DialogSection title="Details">
+          <div className="space-y-3">
+            <DialogField label="Name">
+              <input placeholder="Account name" value={name} onChange={(e) => setName(e.target.value)} required className={fieldClass} />
+            </DialogField>
+            <div className="flex gap-2">
+              <DialogField label="Type">
+                <select value={type} onChange={(e) => setType(e.target.value)} className={fieldClass}>
+                  <option value="checking">Checking</option>
+                  <option value="savings">Savings</option>
+                  <option value="brokerage">Brokerage</option>
+                  <option value="401k">401(k)</option>
+                </select>
+              </DialogField>
+              <DialogField label="Country">
+                <select value={country} onChange={(e) => setCountry(e.target.value)} className={fieldClass}>
+                  <option value="US">US</option>
+                  <option value="KR">KR</option>
+                </select>
+              </DialogField>
+            </div>
+          </div>
+        </DialogSection>
+        <DialogActions saving={saving} onCancel={onCancel} />
+      </form>
+    </DialogModal>
   );
 }
 
@@ -95,48 +145,64 @@ function AddHoldingForm({ accountId, onSave, onCancel }: { accountId: string; on
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-3 wise-card ring-1 ring-accent/30 p-5 space-y-3">
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-6">
-        <input placeholder="Ticker" value={ticker} onChange={(e) => setTicker(e.target.value)} required
-          className="wise-input px-2 py-1.5 text-xs" />
-        <input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required
-          className="wise-input px-2 py-1.5 text-xs" />
-        <select value={assetType} onChange={(e) => setAssetType(e.target.value as HoldingAssetType)}
-          className="wise-input px-2 py-1.5 text-xs">
-          <option value="stock">Stock</option>
-          <option value="etf">ETF</option>
-          <option value="index">Index</option>
-          <option value="bond">Bond</option>
-          <option value="commodity">Commodity</option>
-          <option value="cash">Cash</option>
-        </select>
-        <input placeholder="Shares" type="number" step="any" value={shares} onChange={(e) => setShares(e.target.value)} required
-          className="wise-input px-2 py-1.5 text-xs" />
-        <select value={currency} onChange={(e) => setCurrency(e.target.value as Currency)}
-          className="wise-input px-2 py-1.5 text-xs">
-          <option value="USD">USD</option>
-          <option value="KRW">KRW</option>
-        </select>
-        <select value={riskLevel} onChange={(e) => setRiskLevel(e.target.value as RiskLevel)}
-          className="wise-input px-2 py-1.5 text-xs">
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-          <option value="very_high">Very High</option>
-        </select>
-      </div>
-      <div className="flex gap-2">
-        <button type="submit" disabled={saving}
-          className="wise-btn bg-accent px-4 py-1.5 text-sm font-medium text-accent-dark">
-          {saving ? "Saving..." : "Save"}
-        </button>
-        <button type="button" onClick={onCancel} className="rounded-full px-4 py-1.5 text-sm text-muted hover:text-foreground">Cancel</button>
-      </div>
-    </form>
+    <DialogModal title="Add Holding" onClose={onCancel}>
+      <form onSubmit={handleSubmit}>
+        <DialogSection title="Identity">
+          <div className="space-y-3">
+            <div className="flex gap-2">
+              <DialogField label="Ticker">
+                <input placeholder="AAPL" value={ticker} onChange={(e) => setTicker(e.target.value)} required className={fieldClass} />
+              </DialogField>
+              <div className="flex-[2]">
+                <DialogField label="Name">
+                  <input placeholder="Apple Inc." value={name} onChange={(e) => setName(e.target.value)} required className={fieldClass} />
+                </DialogField>
+              </div>
+            </div>
+          </div>
+        </DialogSection>
+        <DialogSection title="Classification">
+          <div className="flex gap-2">
+            <DialogField label="Type">
+              <select value={assetType} onChange={(e) => setAssetType(e.target.value as HoldingAssetType)} className={fieldClass}>
+                <option value="stock">Stock</option>
+                <option value="etf">ETF</option>
+                <option value="index">Index</option>
+                <option value="bond">Bond</option>
+                <option value="commodity">Commodity</option>
+                <option value="cash">Cash</option>
+              </select>
+            </DialogField>
+            <DialogField label="Risk">
+              <select value={riskLevel} onChange={(e) => setRiskLevel(e.target.value as RiskLevel)} className={fieldClass}>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="very_high">Very High</option>
+              </select>
+            </DialogField>
+          </div>
+        </DialogSection>
+        <DialogSection title="Position">
+          <div className="flex gap-2">
+            <DialogField label="Shares">
+              <input type="number" step="any" placeholder="0" value={shares} onChange={(e) => setShares(e.target.value)} required className={fieldClass} />
+            </DialogField>
+            <DialogField label="Currency">
+              <select value={currency} onChange={(e) => setCurrency(e.target.value as Currency)} className={fieldClass}>
+                <option value="USD">USD</option>
+                <option value="KRW">KRW</option>
+              </select>
+            </DialogField>
+          </div>
+        </DialogSection>
+        <DialogActions saving={saving} onCancel={onCancel} />
+      </form>
+    </DialogModal>
   );
 }
 
-function EditHoldingRow({ holding, onSave, onCancel }: { holding: Holding; onSave: () => void; onCancel: () => void }) {
+function EditHoldingDialog({ holding, onSave, onCancel }: { holding: Holding; onSave: () => void; onCancel: () => void }) {
   const [name, setName] = useState(holding.name);
   const [assetType, setAssetType] = useState<HoldingAssetType>(holding.asset_type);
   const [shares, setShares] = useState(String(holding.shares));
@@ -159,48 +225,55 @@ function EditHoldingRow({ holding, onSave, onCancel }: { holding: Holding; onSav
   };
 
   return (
-    <tr className="border-b border-card-border last:border-0">
-      <td className="py-2 font-medium">{holding.ticker}</td>
-      <td className="py-2">
-        <input value={name} onChange={(e) => setName(e.target.value)}
-          className="w-full wise-input px-1.5 py-0.5 text-sm" />
-      </td>
-      <td className="py-2">
-        <select value={assetType} onChange={(e) => setAssetType(e.target.value as HoldingAssetType)}
-          className="wise-input px-1 py-0.5 text-xs">
-          <option value="stock">Stock</option>
-          <option value="etf">ETF</option>
-          <option value="index">Index</option>
-          <option value="bond">Bond</option>
-          <option value="commodity">Commodity</option>
-          <option value="cash">Cash</option>
-        </select>
-      </td>
-      <td className="py-2">
-        <select value={riskLevel} onChange={(e) => setRiskLevel(e.target.value as RiskLevel)}
-          className="wise-input px-1 py-0.5 text-xs">
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-          <option value="very_high">Very High</option>
-        </select>
-      </td>
-      <td className="py-2 text-right">
-        <input type="number" step="any" value={shares} onChange={(e) => setShares(e.target.value)}
-          className="w-24 rounded border border-card-border bg-background px-1.5 py-0.5 text-right text-sm outline-none focus:border-accent" />
-      </td>
-      <td className="py-2 text-right tabular-nums text-muted">—</td>
-      <td className="py-2 text-right space-x-1">
-        <button onClick={handleSubmit} disabled={saving} className={saveBtnClass}>
-          {saving ? "..." : "Save"}
-        </button>
-        <button onClick={onCancel} className={cancelBtnClass}>Cancel</button>
-      </td>
-    </tr>
+    <DialogModal title="Edit Holding" badge={holding.ticker} onClose={onCancel}>
+      <form onSubmit={handleSubmit}>
+        <DialogSection title="Identity">
+          <DialogField label="Name">
+            <input value={name} onChange={(e) => setName(e.target.value)} className={fieldClass} />
+          </DialogField>
+        </DialogSection>
+        <DialogSection title="Classification">
+          <div className="flex gap-2">
+            <DialogField label="Type">
+              <select value={assetType} onChange={(e) => setAssetType(e.target.value as HoldingAssetType)} className={fieldClass}>
+                <option value="stock">Stock</option>
+                <option value="etf">ETF</option>
+                <option value="index">Index</option>
+                <option value="bond">Bond</option>
+                <option value="commodity">Commodity</option>
+                <option value="cash">Cash</option>
+              </select>
+            </DialogField>
+            <DialogField label="Risk">
+              <select value={riskLevel} onChange={(e) => setRiskLevel(e.target.value as RiskLevel)} className={fieldClass}>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="very_high">Very High</option>
+              </select>
+            </DialogField>
+          </div>
+        </DialogSection>
+        <DialogSection title="Position">
+          <div className="flex gap-2">
+            <DialogField label="Shares">
+              <input type="number" step="any" value={shares} onChange={(e) => setShares(e.target.value)} className={fieldClass} />
+            </DialogField>
+            <DialogField label="Currency">
+              <select value={currency} onChange={(e) => setCurrency(e.target.value as Currency)} className={fieldClass}>
+                <option value="USD">USD</option>
+                <option value="KRW">KRW</option>
+              </select>
+            </DialogField>
+          </div>
+        </DialogSection>
+        <DialogActions saving={saving} onCancel={onCancel} />
+      </form>
+    </DialogModal>
   );
 }
 
-function EditInvestmentRow({ inv, onSave, onCancel }: { inv: PrivateInvestment; onSave: () => void; onCancel: () => void }) {
+function EditInvestmentDialog({ inv, onSave, onCancel }: { inv: PrivateInvestment; onSave: () => void; onCancel: () => void }) {
   const [name, setName] = useState(inv.name);
   const [pricePerUnit, setPricePerUnit] = useState(String(inv.price_per_unit));
   const [quantity, setQuantity] = useState(String(inv.quantity));
@@ -225,51 +298,46 @@ function EditInvestmentRow({ inv, onSave, onCancel }: { inv: PrivateInvestment; 
   };
 
   return (
-    <div className="wise-card ring-1 ring-accent/30 p-5 space-y-2">
-      <div className="grid grid-cols-2 gap-2">
-        <div>
-          <label className="text-[10px] uppercase text-muted">Name</label>
-          <input value={name} onChange={(e) => setName(e.target.value)}
-            className="w-full wise-input px-2 py-1 text-sm" />
-        </div>
-        <div>
-          <label className="text-[10px] uppercase text-muted">Price per unit</label>
-          <input type="number" step="any" value={pricePerUnit} onChange={(e) => setPricePerUnit(e.target.value)}
-            className="w-full wise-input px-2 py-1 text-sm" />
-        </div>
-        <div>
-          <label className="text-[10px] uppercase text-muted">Quantity</label>
-          <input type="number" step="any" value={quantity} onChange={(e) => setQuantity(e.target.value)}
-            className="w-full wise-input px-2 py-1 text-sm" />
-        </div>
-        <div>
-          <label className="text-[10px] uppercase text-muted">Ticker</label>
-          <input value={ticker} onChange={(e) => setTicker(e.target.value)}
-            className="w-full wise-input px-2 py-1 text-sm" />
-        </div>
-        <div>
-          <label className="text-[10px] uppercase text-muted">Risk</label>
-          <select value={riskLevel} onChange={(e) => setRiskLevel(e.target.value as RiskLevel)}
-            className="w-full wise-input px-2 py-1 text-sm">
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-            <option value="very_high">Very High</option>
-          </select>
-        </div>
-      </div>
-      <div>
-        <label className="text-[10px] uppercase text-muted">Notes</label>
-        <input value={notes} onChange={(e) => setNotes(e.target.value)}
-          className="w-full wise-input px-2 py-1 text-sm" />
-      </div>
-      <div className="flex gap-2">
-        <button onClick={handleSubmit} disabled={saving} className={saveBtnClass}>
-          {saving ? "Saving..." : "Save"}
-        </button>
-        <button onClick={onCancel} className={cancelBtnClass}>Cancel</button>
-      </div>
-    </div>
+    <DialogModal title="Edit Investment" badge={inv.ticker ?? undefined} onClose={onCancel}>
+      <form onSubmit={handleSubmit}>
+        <DialogSection title="Identity">
+          <div className="space-y-3">
+            <DialogField label="Name">
+              <input value={name} onChange={(e) => setName(e.target.value)} className={fieldClass} />
+            </DialogField>
+            <DialogField label="Ticker">
+              <input value={ticker} onChange={(e) => setTicker(e.target.value)} placeholder="Optional" className={fieldClass} />
+            </DialogField>
+          </div>
+        </DialogSection>
+        <DialogSection title="Position">
+          <div className="space-y-3">
+            <div className="flex gap-2">
+              <DialogField label="Price per unit">
+                <input type="number" step="any" value={pricePerUnit} onChange={(e) => setPricePerUnit(e.target.value)} className={fieldClass} />
+              </DialogField>
+              <DialogField label="Quantity">
+                <input type="number" step="any" value={quantity} onChange={(e) => setQuantity(e.target.value)} className={fieldClass} />
+              </DialogField>
+            </div>
+            <DialogField label="Risk">
+              <select value={riskLevel} onChange={(e) => setRiskLevel(e.target.value as RiskLevel)} className={fieldClass}>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="very_high">Very High</option>
+              </select>
+            </DialogField>
+          </div>
+        </DialogSection>
+        <DialogSection title="Notes">
+          <DialogField label="Notes">
+            <input value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Optional" className={fieldClass} />
+          </DialogField>
+        </DialogSection>
+        <DialogActions saving={saving} onCancel={onCancel} />
+      </form>
+    </DialogModal>
   );
 }
 
@@ -307,59 +375,77 @@ function AddInvestmentForm({ defaultType, onSave, onCancel }: { defaultType?: Pr
   };
 
   return (
-    <form onSubmit={handleSubmit} className="wise-card ring-1 ring-accent/30 p-5 space-y-3">
-      <h3 className="text-sm font-medium">New Private Investment</h3>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <select value={assetType} onChange={(e) => setAssetType(e.target.value as PrivateAssetType)}
-          className="wise-input px-2 py-1.5 text-sm">
-          <option value="stock">Stock (Private)</option>
-          <option value="lp">LP Fund</option>
-          <option value="commodity">Commodity</option>
-        </select>
-        <input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required
-          className="wise-input px-2 py-1.5 text-sm" />
-        <input placeholder="Price per unit" type="number" step="any" value={value} onChange={(e) => setValue(e.target.value)} required
-          className="wise-input px-2 py-1.5 text-sm" />
-        <select value={currency} onChange={(e) => setCurrency(e.target.value as Currency)}
-          className="wise-input px-2 py-1.5 text-sm">
-          <option value="USD">USD</option>
-          <option value="KRW">KRW</option>
-        </select>
-        <select value={riskLevel} onChange={(e) => setRiskLevel(e.target.value as RiskLevel)}
-          className="wise-input px-2 py-1.5 text-sm">
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-          <option value="very_high">Very High</option>
-        </select>
-        {isCommodity && (
-          <>
-            <input placeholder="Quantity (e.g. 150)" type="number" step="any" value={quantity} onChange={(e) => setQuantity(e.target.value)}
-              className="wise-input px-2 py-1.5 text-sm" />
-            <input placeholder="Unit (e.g. oz)" value={unitLabel} onChange={(e) => setUnitLabel(e.target.value)}
-              className="wise-input px-2 py-1.5 text-sm" />
-            <input placeholder="COMEX ticker (e.g. SI)" value={ticker} onChange={(e) => setTicker(e.target.value)}
-              className="wise-input px-2 py-1.5 text-sm" />
-          </>
-        )}
-      </div>
-      <textarea placeholder="Notes" value={notes} onChange={(e) => setNotes(e.target.value)} rows={2}
-        className="w-full wise-input px-2 py-1.5 text-sm" />
-      <div className="flex gap-2">
-        <button type="submit" disabled={saving}
-          className="wise-btn bg-accent px-4 py-1.5 text-sm font-medium text-accent-dark">
-          {saving ? "Saving..." : "Save"}
-        </button>
-        <button type="button" onClick={onCancel} className="rounded-full px-4 py-1.5 text-sm text-muted hover:text-foreground">Cancel</button>
-      </div>
-    </form>
+    <DialogModal title="New Investment" onClose={onCancel}>
+      <form onSubmit={handleSubmit}>
+        <DialogSection title="Identity">
+          <div className="space-y-3">
+            <div className="flex gap-2">
+              <DialogField label="Type">
+                <select value={assetType} onChange={(e) => setAssetType(e.target.value as PrivateAssetType)} className={fieldClass}>
+                  <option value="stock">Stock (Private)</option>
+                  <option value="lp">LP Fund</option>
+                  <option value="commodity">Commodity</option>
+                </select>
+              </DialogField>
+              <div className="flex-[2]">
+                <DialogField label="Name">
+                  <input placeholder="Company name" value={name} onChange={(e) => setName(e.target.value)} required className={fieldClass} />
+                </DialogField>
+              </div>
+            </div>
+          </div>
+        </DialogSection>
+        <DialogSection title="Position">
+          <div className="space-y-3">
+            <div className="flex gap-2">
+              <DialogField label="Price per unit">
+                <input type="number" step="any" placeholder="0" value={value} onChange={(e) => setValue(e.target.value)} required className={fieldClass} />
+              </DialogField>
+              <DialogField label="Currency">
+                <select value={currency} onChange={(e) => setCurrency(e.target.value as Currency)} className={fieldClass}>
+                  <option value="USD">USD</option>
+                  <option value="KRW">KRW</option>
+                </select>
+              </DialogField>
+            </div>
+            <DialogField label="Risk">
+              <select value={riskLevel} onChange={(e) => setRiskLevel(e.target.value as RiskLevel)} className={fieldClass}>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="very_high">Very High</option>
+              </select>
+            </DialogField>
+            {isCommodity && (
+              <>
+                <div className="flex gap-2">
+                  <DialogField label="Quantity">
+                    <input type="number" step="any" placeholder="150" value={quantity} onChange={(e) => setQuantity(e.target.value)} className={fieldClass} />
+                  </DialogField>
+                  <DialogField label="Unit">
+                    <input placeholder="oz" value={unitLabel} onChange={(e) => setUnitLabel(e.target.value)} className={fieldClass} />
+                  </DialogField>
+                </div>
+                <DialogField label="COMEX Ticker">
+                  <input placeholder="SI" value={ticker} onChange={(e) => setTicker(e.target.value)} className={fieldClass} />
+                </DialogField>
+              </>
+            )}
+          </div>
+        </DialogSection>
+        <DialogSection title="Notes">
+          <DialogField label="Notes">
+            <textarea placeholder="Optional" value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} className={fieldClass} />
+          </DialogField>
+        </DialogSection>
+        <DialogActions saving={saving} onCancel={onCancel} />
+      </form>
+    </DialogModal>
   );
 }
 
 // ── Shared button styles ──
 const editBtnClass = "wise-btn bg-accent-dark/8 px-4 py-1.5 text-sm font-medium text-accent";
-const saveBtnClass = "wise-btn bg-accent px-4 py-1.5 text-sm font-medium text-accent-dark";
-const cancelBtnClass = "rounded-full px-4 py-1.5 text-sm text-muted hover:text-foreground";
 
 const riskBadge: Record<RiskLevel, string> = {
   low: "bg-accent-light text-warm-dark",
@@ -464,15 +550,7 @@ function AccountCard({ account, prices, fxRate, onRefresh }: { account: Account;
             {holdings
               .filter((h) => h.shares !== 0)
               .sort((a, b) => (a.asset_type === "cash" ? 1 : 0) - (b.asset_type === "cash" ? 1 : 0))
-              .map((h) =>
-              editingId === h.id ? (
-                <EditHoldingRow
-                  key={h.id}
-                  holding={h}
-                  onSave={() => { setEditingId(null); load(); }}
-                  onCancel={() => setEditingId(null)}
-                />
-              ) : (
+              .map((h) => (
                 <tr key={h.id} className="border-b border-card-border last:border-0">
                   <td className="py-2 font-medium truncate">{h.name}</td>
                   <td className="py-2 text-muted">{h.ticker}</td>
@@ -494,6 +572,17 @@ function AccountCard({ account, prices, fxRate, onRefresh }: { account: Account;
         </table>
         </div>
       )}
+
+      {editingId && (() => {
+        const h = holdings.find((h) => h.id === editingId);
+        return h ? (
+          <EditHoldingDialog
+            holding={h}
+            onSave={() => { setEditingId(null); load(); }}
+            onCancel={() => setEditingId(null)}
+          />
+        ) : null;
+      })()}
 
       {showAddHolding && (
         <AddHoldingForm
@@ -715,18 +804,7 @@ export default function ManagePage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {items.map((inv) =>
-                      editingInvId === inv.id ? (
-                        <tr key={inv.id}>
-                          <td colSpan={7} className="py-2">
-                            <EditInvestmentRow
-                              inv={inv}
-                              onSave={() => { setEditingInvId(null); loadInvestments(); }}
-                              onCancel={() => setEditingInvId(null)}
-                            />
-                          </td>
-                        </tr>
-                      ) : (
+                    {items.map((inv) => (
                         <tr key={inv.id} className="border-b border-card-border last:border-0">
                           <td className="py-2 font-medium truncate">{inv.name}</td>
                           <td className="py-2 text-muted">{inv.ticker ?? "—"}</td>
@@ -742,8 +820,7 @@ export default function ManagePage() {
                             <button onClick={() => setEditingInvId(inv.id)} className={editBtnClass}>Edit</button>
                           </td>
                         </tr>
-                      )
-                    )}
+                    ))}
                   </tbody>
                 </table>
                 </div>
@@ -758,6 +835,17 @@ export default function ManagePage() {
               </div>
             );
           })}
+
+          {editingInvId && (() => {
+            const inv = investments.find((i) => i.id === editingInvId);
+            return inv ? (
+              <EditInvestmentDialog
+                inv={inv}
+                onSave={() => { setEditingInvId(null); loadInvestments(); }}
+                onCancel={() => setEditingInvId(null)}
+              />
+            ) : null;
+          })()}
         </div>
       )}
     </div>
