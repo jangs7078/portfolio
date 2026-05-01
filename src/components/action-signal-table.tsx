@@ -64,8 +64,8 @@ export default function ActionSignalTable({ assets }: Props) {
         <table className="w-full text-left">
           <thead>
             <tr className="border-b border-card-border text-xs text-muted">
-              <th className="px-2 py-1.5 font-medium">Ticker</th>
               <th className="px-2 py-1.5 font-medium">Name</th>
+              <th className="px-2 py-1.5 font-medium">Ticker</th>
               <th className="px-2 py-1.5 text-right font-medium">Value</th>
               <th className="px-2 py-1.5 text-right font-medium">Since Bought</th>
               <th className="px-2 py-1.5 text-right font-medium">1W</th>
@@ -79,8 +79,8 @@ export default function ActionSignalTable({ assets }: Props) {
           <tbody>
             {sorted.map((asset) => (
               <tr key={asset.ticker} className="border-b border-card-border/50">
-                <td className="px-2 py-1.5 text-xs font-medium">{asset.ticker}</td>
-                <td className="px-2 py-1.5 text-xs text-muted truncate max-w-32">{asset.name}</td>
+                <td className="px-2 py-1.5 text-xs font-medium truncate max-w-32">{asset.name}</td>
+                <td className="px-2 py-1.5 text-xs text-muted">{asset.ticker}</td>
                 <td className="px-2 py-1.5 text-right text-xs text-muted">
                   {formatCurrency(asset.value)}
                 </td>
