@@ -103,7 +103,7 @@ export default function NetWorthChart({ data, defaultRange = "ALL" }: Props) {
           ))}
         </div>
       </div>
-      <div className="h-64">
+      <div className="h-48 sm:h-64">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={filtered}>
             <defs>

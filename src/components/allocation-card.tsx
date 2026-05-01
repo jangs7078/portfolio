@@ -30,9 +30,9 @@ export default function AllocationCard({
   return (
     <div className="rounded-lg border border-card-border bg-card p-4">
       <h2 className="mb-3 text-sm font-medium text-muted">{title}</h2>
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col items-center gap-4 sm:flex-row">
         {/* Pie Chart */}
-        <div className="h-32 w-32 shrink-0">
+        <div className="h-28 w-28 shrink-0 sm:h-32 sm:w-32">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie

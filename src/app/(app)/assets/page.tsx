@@ -42,7 +42,7 @@ function AddAccountForm({ onSave, onCancel }: { onSave: () => void; onCancel: ()
   return (
     <form onSubmit={handleSubmit} className="rounded-lg border border-accent/30 bg-card p-4 space-y-3">
       <h3 className="text-sm font-medium">New Account</h3>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <input placeholder="Account name" value={name} onChange={(e) => setName(e.target.value)} required
           className="rounded border border-card-border bg-background px-2 py-1.5 text-sm outline-none focus:border-accent" />
         <select value={type} onChange={(e) => setType(e.target.value)}
@@ -96,7 +96,7 @@ function AddHoldingForm({ accountId, onSave, onCancel }: { accountId: string; on
 
   return (
     <form onSubmit={handleSubmit} className="mt-3 rounded border border-accent/30 p-3 space-y-3">
-      <div className="grid grid-cols-6 gap-2">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-6">
         <input placeholder="Ticker" value={ticker} onChange={(e) => setTicker(e.target.value)} required
           className="rounded border border-card-border bg-background px-2 py-1.5 text-xs outline-none focus:border-accent" />
         <input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required
@@ -309,7 +309,7 @@ function AddInvestmentForm({ defaultType, onSave, onCancel }: { defaultType?: Pr
   return (
     <form onSubmit={handleSubmit} className="rounded-lg border border-accent/30 bg-card p-4 space-y-3">
       <h3 className="text-sm font-medium">New Private Investment</h3>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <select value={assetType} onChange={(e) => setAssetType(e.target.value as PrivateAssetType)}
           className="rounded border border-card-border bg-background px-2 py-1.5 text-sm outline-none focus:border-accent">
           <option value="stock">Stock (Private)</option>
@@ -410,8 +410,8 @@ function AccountCard({ account, prices, fxRate, onRefresh }: { account: Account;
 
   return (
     <div className="rounded-lg border border-card-border bg-card p-4">
-      <div className="mb-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+      <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <h3 className="font-medium">{account.name}</h3>
           <span className="text-xs text-muted">{account.country} / {account.type}</span>
           {!loading && (
@@ -438,7 +438,8 @@ function AccountCard({ account, prices, fxRate, onRefresh }: { account: Account;
       ) : holdings.length === 0 ? (
         <p className="text-xs text-muted">No holdings yet.</p>
       ) : (
-        <table className="w-full text-sm table-fixed">
+        <div className="overflow-x-auto">
+        <table className="w-full min-w-[600px] text-sm table-fixed">
           <colgroup>
             <col className="w-[22%]" />
             <col className="w-[12%]" />
@@ -491,6 +492,7 @@ function AccountCard({ account, prices, fxRate, onRefresh }: { account: Account;
             )}
           </tbody>
         </table>
+        </div>
       )}
 
       {showAddHolding && (
@@ -659,8 +661,8 @@ export default function ManagePage() {
             const items = groupedInvestments[type];
             return (
               <div key={type} className="rounded-lg border border-card-border bg-card p-4">
-                <div className="mb-3 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+                <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                     <h3 className="font-medium">{groupLabels[type]}</h3>
                     {items.length > 0 && (
                       <span className="text-sm font-bold tabular-nums text-accent">
@@ -690,7 +692,8 @@ export default function ManagePage() {
                   <p className="text-xs text-muted">No investments yet.</p>
                 )}
                 {items.length > 0 && (
-                <table className="w-full text-sm table-fixed">
+                <div className="overflow-x-auto">
+                <table className="w-full min-w-[600px] text-sm table-fixed">
                   <colgroup>
                     <col className="w-[26%]" />
                     <col className="w-[10%]" />
@@ -743,6 +746,7 @@ export default function ManagePage() {
                     )}
                   </tbody>
                 </table>
+                </div>
                 )}
                 {addingInvType === type && (
                   <AddInvestmentForm

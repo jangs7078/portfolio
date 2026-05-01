@@ -286,11 +286,11 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       {/* Net Worth Header + FX Rate */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-sm text-muted">Total Net Worth</p>
-          <div className="flex items-baseline gap-3">
-            <h1 className="text-4xl font-bold tabular-nums">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-3">
+            <h1 className="text-3xl font-bold tabular-nums sm:text-4xl">
               {formatCurrency(primaryTotal, primaryCurrency)}
             </h1>
             <span

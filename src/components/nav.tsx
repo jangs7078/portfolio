@@ -14,19 +14,19 @@ export default function Nav() {
   const pathname = usePathname();
 
   return (
-    <nav className="border-b border-card-border bg-card px-4 py-3">
+    <nav className="border-b border-card-border bg-card px-4 py-2 sm:py-3">
       <div className="mx-auto flex max-w-7xl items-center justify-between">
-        <Link href="/dashboard" className="text-lg font-bold tracking-tight">
+        <Link href="/dashboard" className="hidden text-lg font-bold tracking-tight sm:block">
           Portfolio
         </Link>
-        <div className="flex gap-1">
+        <div className="flex w-full justify-around gap-1 sm:w-auto sm:justify-end">
           {links.map((link) => {
             const active = pathname.startsWith(link.href);
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`rounded-md px-3 py-1.5 text-sm transition-colors ${
+                className={`rounded-md px-3 py-1.5 text-xs sm:text-sm transition-colors ${
                   active
                     ? "bg-accent/15 text-accent"
                     : "text-muted hover:text-foreground"
