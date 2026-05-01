@@ -253,7 +253,13 @@ export default function DashboardPage() {
 
   const snapshotTotalUsd = data.latestSnapshots.reduce((sum, s) => sum + Number(s.value_usd), 0);
   const totalUsd = scramble(data.liveTotalUsd ?? snapshotTotalUsd);
-  const prevTotalUsd = scramble(data.previousSnapshots.reduce((sum, s) => sum + Number(s.value_usd), 0));
+  // When showing live prices, compare against yesterday's snapshot (latestSnapshots).
+  // When falling back to snapshot data, compare against the previous day's snapshot.
+  const prevTotalUsd = scramble(
+    data.liveTotalUsd != null
+      ? snapshotTotalUsd
+      : data.previousSnapshots.reduce((sum, s) => sum + Number(s.value_usd), 0),
+  );
   const dailyChange = totalUsd - prevTotalUsd;
   const dailyChangePct = prevTotalUsd > 0 ? (dailyChange / prevTotalUsd) * 100 : 0;
   const positive = dailyChange >= 0;
