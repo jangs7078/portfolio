@@ -266,12 +266,18 @@ function buildActionSignals(
     const return1M = computeReturn(th, 30);
     const return3M = computeReturn(th, 90);
 
-    // Determine risk level
+    // Determine name and risk level
+    let name = ticker;
     let riskRaw: string = "medium";
     const holding = holdingMap.get(ticker);
     const inv = invMap.get(ticker);
-    if (holding) riskRaw = holding.risk_level;
-    else if (inv) riskRaw = inv.risk_level;
+    if (holding) {
+      name = holding.name;
+      riskRaw = holding.risk_level;
+    } else if (inv) {
+      name = inv.name;
+      riskRaw = inv.risk_level;
+    }
 
     const riskLevel = riskRaw
       .replace("_", " ")
@@ -281,6 +287,7 @@ function buildActionSignals(
 
     results.push({
       ticker,
+      name,
       value,
       returnSinceBought,
       return1W,

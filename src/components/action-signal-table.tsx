@@ -4,6 +4,7 @@ import { formatCurrency, formatPct } from "@/lib/format";
 
 export interface ActionSignalAsset {
   ticker: string;
+  name: string;
   value: number;
   returnSinceBought: number | null;
   return1W: number | null;
@@ -45,15 +46,15 @@ function ReturnCell({ value }: { value: number | null }) {
 }
 
 export default function ActionSignalTable({ assets }: Props) {
-  // Sort: Sell first, then Hold, then Buy. Within group sort by worst momentum first.
-  const sortOrder = { Sell: 0, Hold: 1, Buy: 2 };
+  // Sort: Buy first, then Sell, then Hold. Within group sort by since-bought return descending.
+  const sortOrder = { Buy: 0, Sell: 1, Hold: 2 };
   const sorted = [...assets].sort((a, b) => {
     const sigDiff = sortOrder[a.signal] - sortOrder[b.signal];
     if (sigDiff !== 0) return sigDiff;
-    // Within same signal, sort by average return ascending (worst first)
-    const avgA = avgReturn(a);
-    const avgB = avgReturn(b);
-    return avgA - avgB;
+    // Within same signal, sort by since-bought return descending (best first)
+    const ra = a.returnSinceBought ?? -Infinity;
+    const rb = b.returnSinceBought ?? -Infinity;
+    return rb - ra;
   });
 
   return (
@@ -64,6 +65,7 @@ export default function ActionSignalTable({ assets }: Props) {
           <thead>
             <tr className="border-b border-card-border text-xs text-muted">
               <th className="px-2 py-1.5 font-medium">Ticker</th>
+              <th className="px-2 py-1.5 font-medium">Name</th>
               <th className="px-2 py-1.5 text-right font-medium">Value</th>
               <th className="px-2 py-1.5 text-right font-medium">Since Bought</th>
               <th className="px-2 py-1.5 text-right font-medium">1W</th>
@@ -78,6 +80,7 @@ export default function ActionSignalTable({ assets }: Props) {
             {sorted.map((asset) => (
               <tr key={asset.ticker} className="border-b border-card-border/50">
                 <td className="px-2 py-1.5 text-xs font-medium">{asset.ticker}</td>
+                <td className="px-2 py-1.5 text-xs text-muted truncate max-w-32">{asset.name}</td>
                 <td className="px-2 py-1.5 text-right text-xs text-muted">
                   {formatCurrency(asset.value)}
                 </td>
