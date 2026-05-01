@@ -150,6 +150,10 @@ function computeReturn(
     refDate = cutoff.toISOString().split("T")[0];
   }
 
+  // If the reference date is before the ticker's first snapshot,
+  // the asset wasn't held at that time — return null (show blank)
+  if (refDate < history.dates[0]) return null;
+
   // Find closest date on or after refDate
   let refIdx = -1;
   for (let i = 0; i < history.dates.length; i++) {
