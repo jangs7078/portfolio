@@ -525,7 +525,16 @@ function AccountCard({ account, prices, fxRate, onRefresh }: { account: Account;
         <p className="text-xs text-muted">No holdings yet.</p>
       ) : (
         <div className="overflow-x-auto">
-        <table className="w-full min-w-[600px] text-sm whitespace-nowrap">
+        <table className="w-full min-w-[700px] text-sm table-fixed whitespace-nowrap">
+          <colgroup>
+            <col style={{ width: 160 }} />
+            <col style={{ width: 90 }} />
+            <col style={{ width: 80 }} />
+            <col style={{ width: 80 }} />
+            <col style={{ width: 100 }} />
+            <col style={{ width: 120 }} />
+            <col style={{ width: 60 }} />
+          </colgroup>
           <thead>
             <tr className="border-b border-card-border text-left text-xs text-muted">
               <th className="pb-2">Name</th>
@@ -543,8 +552,8 @@ function AccountCard({ account, prices, fxRate, onRefresh }: { account: Account;
               .sort((a, b) => (a.asset_type === "cash" ? 1 : 0) - (b.asset_type === "cash" ? 1 : 0))
               .map((h) => (
                 <tr key={h.id} className="border-b border-card-border last:border-0">
-                  <td className="py-2 font-medium">{h.name}</td>
-                  <td className="py-2 px-2 text-muted">{h.ticker}</td>
+                  <td className="py-2 font-medium truncate">{h.name}</td>
+                  <td className="py-2 px-2 text-muted truncate">{h.ticker}</td>
                   <td className="py-2 px-2 text-xs text-muted">{h.asset_type}</td>
                   <td className="py-2 px-2"><span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${riskBadge[h.risk_level]}`}>{riskLabels[h.risk_level]}</span></td>
                   <td className="py-2 px-2 text-right tabular-nums">{h.shares.toLocaleString()}</td>
@@ -773,7 +782,16 @@ export default function ManagePage() {
                 )}
                 {items.length > 0 && (
                 <div className="overflow-x-auto">
-                <table className="w-full min-w-[600px] text-sm whitespace-nowrap">
+                <table className="w-full min-w-[700px] text-sm table-fixed whitespace-nowrap">
+                  <colgroup>
+                    <col style={{ width: 160 }} />
+                    <col style={{ width: 90 }} />
+                    <col style={{ width: 80 }} />
+                    <col style={{ width: 80 }} />
+                    <col style={{ width: 100 }} />
+                    <col style={{ width: 120 }} />
+                    <col style={{ width: 60 }} />
+                  </colgroup>
                   <thead>
                     <tr className="border-b border-card-border text-left text-xs text-muted">
                       <th className="pb-2">Name</th>
@@ -788,8 +806,8 @@ export default function ManagePage() {
                   <tbody>
                     {items.map((inv) => (
                         <tr key={inv.id} className="border-b border-card-border last:border-0">
-                          <td className="py-2 font-medium">{inv.name}</td>
-                          <td className="py-2 px-2 text-muted">{inv.ticker ?? "—"}</td>
+                          <td className="py-2 font-medium truncate">{inv.name}</td>
+                          <td className="py-2 px-2 text-muted truncate">{inv.ticker ?? "—"}</td>
                           <td className="py-2 px-2 text-xs text-muted">{inv.asset_type}</td>
                           <td className="py-2 px-2"><span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${riskBadge[inv.risk_level]}`}>{riskLabels[inv.risk_level]}</span></td>
                           <td className="py-2 px-2 text-right tabular-nums">
