@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useSettings, setSetting, type Currency, type TimeRange } from "@/lib/settings";
+import { useDemoMode, setDemoMode } from "@/lib/demo-mode";
 import { supabase } from "@/lib/supabase";
 
 const currencies: Currency[] = ["USD", "KRW"];
@@ -9,6 +10,7 @@ const timeRanges: TimeRange[] = ["1W", "1M", "3M", "YTD", "1Y", "ALL"];
 
 export default function SettingsPage() {
   const settings = useSettings();
+  const { isDemoMode } = useDemoMode();
   const [resetStatus, setResetStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
   async function handlePasswordReset() {
@@ -71,6 +73,31 @@ export default function SettingsPage() {
                   {r}
                 </button>
               ))}
+            </div>
+          </div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="font-medium">Demo Mode</p>
+              <p className="text-xs text-muted">Scramble financial values for privacy</p>
+            </div>
+            <div className="flex gap-2">
+              {(["Off", "On"] as const).map((label) => {
+                const isOn = label === "On";
+                const active = isDemoMode === isOn;
+                return (
+                  <button
+                    key={label}
+                    onClick={() => setDemoMode(isOn)}
+                    className={`rounded-full px-4 py-1.5 text-sm transition-all ${
+                      active
+                        ? "bg-accent text-accent-dark font-semibold"
+                        : "text-muted hover:text-foreground hover:scale-105 active:scale-95"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
