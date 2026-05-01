@@ -2,7 +2,7 @@ export function formatCurrency(value: number, currency: "USD" | "KRW" = "USD"): 
   if (currency === "KRW") {
     return `₩${Math.round(value).toLocaleString()}`;
   }
-  return `$${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  return `$${Math.ceil(value).toLocaleString()}`;
 }
 
 export function formatPct(value: number): string {
