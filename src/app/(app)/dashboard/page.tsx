@@ -9,6 +9,7 @@ import {
   getPrivateInvestments,
   getLatestSnapshotDate,
   getSnapshotDates,
+  getSnapshotHistoryByTicker,
 } from "@/lib/db";
 import type { Snapshot, Holding, PrivateInvestment } from "@/lib/types";
 import NetWorthChart from "@/components/net-worth-chart";
@@ -401,9 +402,32 @@ export default function DashboardPage() {
       const uniqueNonCash = [...new Set(nonCashTickers)];
       if (uniqueNonCash.length > 0) {
         try {
-          const histRes = await fetch(`/api/history?tickers=${uniqueNonCash.join(",")}`);
-          const histData = await histRes.json();
-          tickerHistory = histData.history ?? {};
+          const histSnapshots = await getSnapshotHistoryByTicker(uniqueNonCash);
+
+          // Group by ticker, aggregate value_usd by date
+          const grouped: Record<string, Record<string, { usd: number; hasNative: boolean }>> = {};
+          for (const snap of histSnapshots) {
+            if (!grouped[snap.ticker]) grouped[snap.ticker] = {};
+            const byDate = grouped[snap.ticker];
+            if (!byDate[snap.date]) byDate[snap.date] = { usd: 0, hasNative: false };
+            byDate[snap.date].usd += Number(snap.value_usd);
+            if (Number(snap.value_native) > 0) byDate[snap.date].hasNative = true;
+          }
+
+          for (const [ticker, byDate] of Object.entries(grouped)) {
+            const sortedDates = Object.keys(byDate).sort();
+            const dates: string[] = [];
+            const values: number[] = [];
+            let firstBoughtDate: string | null = null;
+            for (const date of sortedDates) {
+              dates.push(date);
+              values.push(byDate[date].usd);
+              if (firstBoughtDate === null && byDate[date].hasNative) {
+                firstBoughtDate = date;
+              }
+            }
+            tickerHistory[ticker] = { dates, values, firstBoughtDate };
+          }
         } catch {
           // Fall back to empty
         }
