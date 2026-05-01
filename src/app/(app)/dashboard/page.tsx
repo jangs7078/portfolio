@@ -15,6 +15,7 @@ import NetWorthChart from "@/components/net-worth-chart";
 import AllocationCard from "@/components/allocation-card";
 import FxCard from "@/components/fx-card";
 import { useSettings } from "@/lib/settings";
+import { useDemoMode } from "@/lib/demo-mode";
 
 interface DashboardData {
   latestSnapshots: Snapshot[];
@@ -244,14 +245,15 @@ export default function DashboardPage() {
   }, []);
 
   const settings = useSettings();
+  const { scramble } = useDemoMode();
 
   if (loading || !data) {
     return <div className="flex min-h-[50vh] items-center justify-center text-muted">Loading...</div>;
   }
 
   const snapshotTotalUsd = data.latestSnapshots.reduce((sum, s) => sum + Number(s.value_usd), 0);
-  const totalUsd = data.liveTotalUsd ?? snapshotTotalUsd;
-  const prevTotalUsd = data.previousSnapshots.reduce((sum, s) => sum + Number(s.value_usd), 0);
+  const totalUsd = scramble(data.liveTotalUsd ?? snapshotTotalUsd);
+  const prevTotalUsd = scramble(data.previousSnapshots.reduce((sum, s) => sum + Number(s.value_usd), 0));
   const dailyChange = totalUsd - prevTotalUsd;
   const dailyChangePct = prevTotalUsd > 0 ? (dailyChange / prevTotalUsd) * 100 : 0;
   const positive = dailyChange >= 0;
@@ -266,7 +268,10 @@ export default function DashboardPage() {
 
   // Append today's live data point to chart history
   const chartHistory = (() => {
-    if (data.liveTotalUsd == null || currentFxRate === 0) return data.netWorthHistory;
+    const applyScramble = (history: typeof data.netWorthHistory) =>
+      history.map((d) => ({ ...d, value: scramble(d.value), valueKrw: scramble(d.valueKrw) }));
+
+    if (data.liveTotalUsd == null || currentFxRate === 0) return applyScramble(data.netWorthHistory);
     const today = new Date().toISOString().split("T")[0];
     const history = data.netWorthHistory.filter((d) => d.date < today);
     history.push({
@@ -275,10 +280,13 @@ export default function DashboardPage() {
       valueKrw: Math.round(data.liveTotalUsd * currentFxRate),
       fxRate: currentFxRate,
     });
-    return history;
+    return applyScramble(history);
   })();
 
-  const currentSnapshots = data.liveSnapshots ?? data.latestSnapshots;
+  const currentSnapshots = (data.liveSnapshots ?? data.latestSnapshots).map((s) => ({
+    ...s,
+    value_usd: scramble(Number(s.value_usd)),
+  }));
   const allocByClass = buildAllocByClass(currentSnapshots, data.holdings, data.investments);
   const allocByRisk = buildAllocByRisk(currentSnapshots, data.holdings, data.investments);
   const allocByCurrency = buildAllocByCurrency(currentSnapshots);
