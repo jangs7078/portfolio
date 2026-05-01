@@ -9,14 +9,9 @@ import {
   getPrivateInvestments,
   getLatestSnapshotDate,
   getSnapshotDates,
-  getSnapshotHistoryByTicker,
 } from "@/lib/db";
 import type { Snapshot, Holding, PrivateInvestment } from "@/lib/types";
 import NetWorthChart from "@/components/net-worth-chart";
-import IndexedPerformanceChart from "@/components/indexed-performance-chart";
-import ActionSignalTable from "@/components/action-signal-table";
-import type { TickerHistory } from "@/components/indexed-performance-chart";
-import type { ActionSignalAsset } from "@/components/action-signal-table";
 import AllocationCard from "@/components/allocation-card";
 import FxCard from "@/components/fx-card";
 import { useSettings } from "@/lib/settings";
@@ -32,7 +27,6 @@ interface DashboardData {
   liveTotalUsd: number | null;
   liveFxRate: number | null;
   liveSnapshots: Snapshot[] | null;
-  tickerHistory: Record<string, TickerHistory>;
 }
 
 function buildAllocByClass(
@@ -128,178 +122,6 @@ function buildAllocByCurrency(latest: Snapshot[]) {
       pct: Math.round((value / total) * 1000) / 10,
     }))
     .sort((a, b) => b.value - a.value);
-}
-
-function computeReturn(
-  history: TickerHistory,
-  periodDays: number | "since_bought",
-): number | null {
-  if (history.dates.length === 0) return null;
-
-  const latestValue = history.values[history.values.length - 1];
-  if (latestValue <= 0) return null;
-
-  let refDate: string;
-  if (periodDays === "since_bought") {
-    if (!history.firstBoughtDate) return null;
-    refDate = history.firstBoughtDate;
-  } else {
-    const latest = new Date(history.dates[history.dates.length - 1]);
-    const cutoff = new Date(latest);
-    cutoff.setDate(cutoff.getDate() - periodDays);
-    refDate = cutoff.toISOString().split("T")[0];
-  }
-
-  // If the reference date is before the ticker's first snapshot,
-  // the asset wasn't held at that time — return null (show blank)
-  if (refDate < history.dates[0]) return null;
-
-  // Find closest date on or after refDate
-  let refIdx = -1;
-  for (let i = 0; i < history.dates.length; i++) {
-    if (history.dates[i] >= refDate) {
-      refIdx = i;
-      break;
-    }
-  }
-  if (refIdx === -1) return null;
-
-  const refValue = history.values[refIdx];
-  if (refValue <= 0) return null;
-
-  return ((latestValue - refValue) / refValue) * 100;
-}
-
-function computeSignal(
-  return1W: number | null,
-  return1M: number | null,
-  return3M: number | null,
-  riskLevel: string,
-): { signal: "Buy" | "Hold" | "Sell"; reason: string } {
-  const periods = [return1W, return1M, return3M];
-  let momentum = 0;
-  for (const r of periods) {
-    if (r !== null) {
-      momentum += r > 0 ? 1 : r < 0 ? -1 : 0;
-    }
-  }
-
-  const isHighRisk = riskLevel === "High" || riskLevel === "Very High";
-  const riskLabel = isHighRisk ? "high risk" : "low risk";
-
-  if (momentum >= 3) {
-    return {
-      signal: "Buy",
-      reason: isHighRisk
-        ? "Strong momentum justifies high risk exposure"
-        : "Strong momentum across all periods, low risk",
-    };
-  }
-  if (momentum === 2) {
-    return {
-      signal: isHighRisk ? "Hold" : "Buy",
-      reason: isHighRisk
-        ? `Mostly positive but ${riskLabel} — watch closely`
-        : "Positive trend across most periods, safe to add",
-    };
-  }
-  if (momentum === 1) {
-    return {
-      signal: "Hold",
-      reason: `Mixed signals — some periods up, some down (${riskLabel})`,
-    };
-  }
-  if (momentum === 0) {
-    return {
-      signal: "Hold",
-      reason: `Flat or mixed movement (${riskLabel})`,
-    };
-  }
-  if (momentum === -1) {
-    return {
-      signal: "Hold",
-      reason: isHighRisk
-        ? "Slight decline with high risk — consider reducing"
-        : "Minor dip but low risk — likely temporary",
-    };
-  }
-  if (momentum === -2) {
-    return {
-      signal: isHighRisk ? "Sell" : "Hold",
-      reason: isHighRisk
-        ? "Declining on most timeframes with high risk exposure"
-        : "Dipping but low risk — hold unless trend continues",
-    };
-  }
-  // momentum <= -3
-  return {
-    signal: "Sell",
-    reason: `Consistent losses across all periods (${riskLabel})`,
-  };
-}
-
-function buildActionSignals(
-  tickerHistory: Record<string, TickerHistory>,
-  latestSnapshots: Snapshot[],
-  holdings: Holding[],
-  investments: PrivateInvestment[],
-): ActionSignalAsset[] {
-  const holdingMap = new Map(holdings.map((h) => [h.ticker, h]));
-  const invMap = new Map(
-    investments.filter((i) => i.ticker).map((i) => [i.ticker!, i]),
-  );
-
-  // Current value by ticker from latest snapshots
-  const valueByTicker = new Map<string, number>();
-  for (const s of latestSnapshots) {
-    valueByTicker.set(s.ticker, (valueByTicker.get(s.ticker) || 0) + Number(s.value_usd));
-  }
-
-  const results: ActionSignalAsset[] = [];
-
-  for (const [ticker, th] of Object.entries(tickerHistory)) {
-    const value = valueByTicker.get(ticker) ?? 0;
-    if (value <= 0) continue;
-
-    const returnSinceBought = computeReturn(th, "since_bought");
-    const return1W = computeReturn(th, 7);
-    const return1M = computeReturn(th, 30);
-    const return3M = computeReturn(th, 90);
-
-    // Determine name and risk level
-    let name = ticker;
-    let riskRaw: string = "medium";
-    const holding = holdingMap.get(ticker);
-    const inv = invMap.get(ticker);
-    if (holding) {
-      name = holding.name;
-      riskRaw = holding.risk_level;
-    } else if (inv) {
-      name = inv.name;
-      riskRaw = inv.risk_level;
-    }
-
-    const riskLevel = riskRaw
-      .replace("_", " ")
-      .replace(/\b\w/g, (c) => c.toUpperCase());
-
-    const { signal, reason } = computeSignal(return1W, return1M, return3M, riskLevel);
-
-    results.push({
-      ticker,
-      name,
-      value,
-      returnSinceBought,
-      return1W,
-      return1M,
-      return3M,
-      riskLevel,
-      signal,
-      reason,
-    });
-  }
-
-  return results;
 }
 
 export default function DashboardPage() {
@@ -404,58 +226,6 @@ export default function DashboardPage() {
         }
       }
 
-      // Fetch per-ticker history for performance chart & signal table
-      let tickerHistory: Record<string, TickerHistory> = {};
-      const nonCashTickers = [
-        ...holdings.filter((h) => h.asset_type !== "cash" && h.shares !== 0).map((h) => h.ticker),
-        ...investments.filter((i) => !i.is_deleted).map((i) => i.ticker).filter((t): t is string => t !== null),
-      ];
-      const uniqueNonCash = [...new Set(nonCashTickers)];
-      if (uniqueNonCash.length > 0) {
-        try {
-          const histSnapshots = await getSnapshotHistoryByTicker(uniqueNonCash);
-
-          // Group by ticker — use price_per_unit (not value_usd) so returns
-          // reflect actual price movement, not position size changes from buying more shares
-          const grouped: Record<string, Record<string, { price: number | null; hasNative: boolean }>> = {};
-          for (const snap of histSnapshots) {
-            if (!grouped[snap.ticker]) grouped[snap.ticker] = {};
-            const byDate = grouped[snap.ticker];
-            // Take the first non-null price_per_unit per date per ticker
-            if (!byDate[snap.date]) {
-              byDate[snap.date] = {
-                price: snap.price_per_unit != null ? Number(snap.price_per_unit) : null,
-                hasNative: false,
-              };
-            } else if (byDate[snap.date].price === null && snap.price_per_unit != null) {
-              byDate[snap.date].price = Number(snap.price_per_unit);
-            }
-            if (Number(snap.value_native) > 0) byDate[snap.date].hasNative = true;
-          }
-
-          for (const [ticker, byDate] of Object.entries(grouped)) {
-            const sortedDates = Object.keys(byDate).sort();
-            const dates: string[] = [];
-            const values: number[] = [];
-            let firstBoughtDate: string | null = null;
-            for (const date of sortedDates) {
-              const price = byDate[date].price;
-              if (price == null || price <= 0) continue; // skip dates without a valid price
-              dates.push(date);
-              values.push(price);
-              if (firstBoughtDate === null && byDate[date].hasNative) {
-                firstBoughtDate = date;
-              }
-            }
-            if (dates.length > 0) {
-              tickerHistory[ticker] = { dates, values, firstBoughtDate };
-            }
-          }
-        } catch {
-          // Fall back to empty
-        }
-      }
-
       setData({
         latestSnapshots,
         previousSnapshots,
@@ -467,7 +237,6 @@ export default function DashboardPage() {
         liveTotalUsd,
         liveFxRate,
         liveSnapshots,
-        tickerHistory,
       });
       setLoading(false);
     }
@@ -513,12 +282,6 @@ export default function DashboardPage() {
   const allocByClass = buildAllocByClass(currentSnapshots, data.holdings, data.investments);
   const allocByRisk = buildAllocByRisk(currentSnapshots, data.holdings, data.investments);
   const allocByCurrency = buildAllocByCurrency(currentSnapshots);
-  const actionSignals = buildActionSignals(
-    data.tickerHistory,
-    currentSnapshots,
-    data.holdings,
-    data.investments,
-  );
 
   return (
     <div className="space-y-6">
@@ -549,12 +312,6 @@ export default function DashboardPage() {
 
       {/* Chart */}
       <NetWorthChart data={chartHistory} defaultRange={settings.timeRange} />
-
-      {/* Relative Performance */}
-      <IndexedPerformanceChart history={data.tickerHistory} defaultRange={settings.timeRange} />
-
-      {/* Action Signals */}
-      <ActionSignalTable assets={actionSignals} />
 
       {/* Allocation Cards */}
       <div className="grid gap-4 md:grid-cols-3">
