@@ -2,7 +2,7 @@ export type AccountType = "checking" | "savings" | "brokerage" | "401k";
 export type Country = "US" | "KR";
 export type HoldingAssetType = "stock" | "etf" | "index" | "bond" | "cash" | "commodity";
 export type PrivateAssetType = "stock" | "lp" | "commodity";
-export type RiskLevel = "low" | "medium" | "high" | "very_high";
+export type RiskLevel = "none" | "low" | "medium" | "high" | "very_high";
 export type PriceSource = "comex" | "manual";
 export type Currency = "USD" | "KRW";
 

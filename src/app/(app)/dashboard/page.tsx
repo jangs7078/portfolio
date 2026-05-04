@@ -72,6 +72,7 @@ function buildAllocByRisk(
   investments: PrivateInvestment[],
 ) {
   const colors: Record<string, string> = {
+    None: "#d1d5db",
     Low: "#e2f6d5",
     Medium: "#ffd11a",
     High: "#ffc091",
@@ -105,7 +106,7 @@ function buildAllocByRisk(
       color: colors[label],
     }))
     .sort((a, b) => {
-      const order = ["Low", "Medium", "High", "Very High", "Unclassified"];
+      const order = ["None", "Low", "Medium", "High", "Very High", "Unclassified"];
       return order.indexOf(a.label) - order.indexOf(b.label);
     });
 }

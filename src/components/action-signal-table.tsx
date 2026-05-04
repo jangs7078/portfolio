@@ -18,6 +18,7 @@ interface Props {
 }
 
 const riskBadge: Record<string, string> = {
+  None: "bg-muted/15 text-muted",
   Low: "bg-accent-light text-warm-dark",
   Medium: "bg-warning/20 text-[#7a6400]",
   High: "bg-bright-orange/40 text-[#8b4000]",

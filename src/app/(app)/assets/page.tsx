@@ -176,6 +176,7 @@ function AddHoldingForm({ accountId, onSave, onCancel }: { accountId: string; on
             </DialogField>
             <DialogField label="Risk">
               <select value={riskLevel} onChange={(e) => setRiskLevel(e.target.value as RiskLevel)} className={fieldClass}>
+                <option value="none">None</option>
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
                 <option value="high">High</option>
@@ -247,6 +248,7 @@ function EditHoldingDialog({ holding, onSave, onCancel }: { holding: Holding; on
             </DialogField>
             <DialogField label="Risk">
               <select value={riskLevel} onChange={(e) => setRiskLevel(e.target.value as RiskLevel)} className={fieldClass}>
+                <option value="none">None</option>
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
                 <option value="high">High</option>
@@ -323,6 +325,7 @@ function EditInvestmentDialog({ inv, onSave, onCancel }: { inv: PrivateInvestmen
             </div>
             <DialogField label="Risk">
               <select value={riskLevel} onChange={(e) => setRiskLevel(e.target.value as RiskLevel)} className={fieldClass}>
+                <option value="none">None</option>
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
                 <option value="high">High</option>
@@ -411,6 +414,7 @@ function AddInvestmentForm({ defaultType, onSave, onCancel }: { defaultType?: Pr
             </div>
             <DialogField label="Risk">
               <select value={riskLevel} onChange={(e) => setRiskLevel(e.target.value as RiskLevel)} className={fieldClass}>
+                <option value="none">None</option>
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
                 <option value="high">High</option>
@@ -449,6 +453,7 @@ function AddInvestmentForm({ defaultType, onSave, onCancel }: { defaultType?: Pr
 const editBtnClass = "wise-btn bg-accent-dark/8 px-4 py-1.5 text-sm font-medium text-accent";
 
 const riskBadge: Record<RiskLevel, string> = {
+  none: "bg-muted/15 text-muted",
   low: "bg-accent-light text-warm-dark",
   medium: "bg-warning/20 text-[#7a6400]",
   high: "bg-bright-orange/40 text-[#8b4000]",
@@ -456,6 +461,7 @@ const riskBadge: Record<RiskLevel, string> = {
 };
 
 const riskLabels: Record<RiskLevel, string> = {
+  none: "None",
   low: "Low",
   medium: "Medium",
   high: "High",
