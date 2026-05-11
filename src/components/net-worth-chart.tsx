@@ -71,6 +71,22 @@ export default function NetWorthChart({ data, defaultRange = "ALL" }: Props) {
     return f.map((d) => ({ ...d, ts: new Date(d.date + "T00:00:00").getTime() })) as NumericDataPoint[];
   }, [data, range]);
 
+  const perfUsd = useMemo(() => {
+    if (filtered.length < 2) return null;
+    const first = filtered[0].value;
+    const last = filtered[filtered.length - 1].value;
+    if (first === 0) return null;
+    return ((last - first) / first) * 100;
+  }, [filtered]);
+
+  const perfKrw = useMemo(() => {
+    if (filtered.length < 2) return null;
+    const first = filtered[0].valueKrw;
+    const last = filtered[filtered.length - 1].valueKrw;
+    if (first === 0) return null;
+    return ((last - first) / first) * 100;
+  }, [filtered]);
+
   const [usdMin, usdMax] = useMemo(() => {
     if (filtered.length === 0) return [0, 0];
     const vals = filtered.map((d) => d.value);
@@ -86,7 +102,31 @@ export default function NetWorthChart({ data, defaultRange = "ALL" }: Props) {
   return (
     <div className="wise-card p-5">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-sm font-medium text-muted">Net Worth</h2>
+        <div className="flex items-center gap-3">
+          <h2 className="text-sm font-medium text-muted">Net Worth</h2>
+          {perfUsd !== null && (
+            <div className="flex items-center gap-2">
+              <span
+                className={`text-sm font-semibold ${
+                  perfUsd >= 0 ? "text-[#9fe870]" : "text-[#d03238]"
+                }`}
+              >
+                {perfUsd >= 0 ? "+" : ""}
+                {perfUsd.toFixed(2)}%
+              </span>
+              {perfKrw !== null && (
+                <span
+                  className={`text-sm font-semibold ${
+                    perfKrw >= 0 ? "text-[#38c8ff]" : "text-[#d03238]"
+                  }`}
+                >
+                  {perfKrw >= 0 ? "+" : ""}
+                  {perfKrw.toFixed(2)}%
+                </span>
+              )}
+            </div>
+          )}
+        </div>
         <div className="flex gap-2">
           {ranges.map((r) => (
             <button

@@ -15,6 +15,7 @@ export interface ActionSignalAsset {
 
 interface Props {
   assets: ActionSignalAsset[];
+  totalNetWorth: number;
 }
 
 const riskBadge: Record<string, string> = {
@@ -38,12 +39,13 @@ function ReturnCell({ value, className = "" }: { value: number | null; className
   );
 }
 
-export default function ActionSignalTable({ assets }: Props) {
+export default function ActionSignalTable({ assets, totalNetWorth }: Props) {
   const sorted = [...assets].sort((a, b) => {
     const ra = a.returnSinceBought ?? -Infinity;
     const rb = b.returnSinceBought ?? -Infinity;
     return rb - ra;
   });
+
 
   return (
     <div className="wise-card p-5">
@@ -55,6 +57,7 @@ export default function ActionSignalTable({ assets }: Props) {
               <th className="px-2 py-1.5 font-semibold">Name</th>
               <th className="px-2 py-1.5 font-semibold">Ticker</th>
               <th className="px-2 py-1.5 text-right font-semibold">Value</th>
+              <th className="px-2 py-1.5 text-right font-semibold">%</th>
               <th className="px-2 py-1.5 text-right font-semibold">Since Bought</th>
               <th className="px-2 py-1.5 text-right font-semibold">1W</th>
               <th className="px-2 py-1.5 text-right font-semibold">1M</th>
@@ -69,6 +72,9 @@ export default function ActionSignalTable({ assets }: Props) {
                 <td className="px-2 py-1.5 text-xs text-muted">{asset.ticker}</td>
                 <td className="px-2 py-1.5 text-right text-xs text-muted">
                   {formatCurrency(asset.value)}
+                </td>
+                <td className="px-2 py-1.5 text-right text-xs text-muted">
+                  {totalNetWorth > 0 ? `${((asset.value / totalNetWorth) * 100).toFixed(1)}%` : "--"}
                 </td>
                 <ReturnCell value={asset.returnSinceBought} />
                 <ReturnCell value={asset.return1W} />

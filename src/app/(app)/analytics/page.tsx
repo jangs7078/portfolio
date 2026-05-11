@@ -110,6 +110,7 @@ function buildActionSignals(
 
 export default function AnalyticsPage() {
   const [actionSignals, setActionSignals] = useState<ActionSignalAsset[]>([]);
+  const [totalNetWorth, setTotalNetWorth] = useState(0);
   const [loading, setLoading] = useState(true);
   const { scramble } = useDemoMode();
 
@@ -254,6 +255,8 @@ export default function AnalyticsPage() {
         }
       }
 
+      const netWorth = liveSnapshots.reduce((sum, s) => sum + Number(s.value_usd), 0);
+      setTotalNetWorth(netWorth);
       setActionSignals(buildActionSignals(tickerHistory, liveSnapshots, holdings, investments));
       setLoading(false);
     }
@@ -264,12 +267,13 @@ export default function AnalyticsPage() {
     return <div className="flex min-h-[50vh] items-center justify-center text-muted">Loading...</div>;
   }
 
+  const scrambledNetWorth = scramble(totalNetWorth);
   const scrambledSignals = actionSignals.map((a) => ({ ...a, value: scramble(a.value) }));
 
   return (
     <div className="space-y-8">
       <h1 className="text-2xl font-extrabold tracking-tight">Analytics</h1>
-      <ActionSignalTable assets={scrambledSignals} />
+      <ActionSignalTable assets={scrambledSignals} totalNetWorth={scrambledNetWorth} />
     </div>
   );
 }
