@@ -101,47 +101,47 @@ export default function NetWorthChart({ data, defaultRange = "ALL" }: Props) {
 
   return (
     <div className="wise-card p-5">
-      <div className="mb-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+      <div className="mb-4">
+        <div className="flex items-center justify-between">
           <h2 className="text-sm font-medium text-muted">Net Worth</h2>
-          {perfUsd !== null && (
-            <div className="flex items-center gap-2">
-              <span
-                className={`text-sm font-semibold ${
-                  perfUsd >= 0 ? "text-[#9fe870]" : "text-[#d03238]"
+          <div className="flex gap-2">
+            {ranges.map((r) => (
+              <button
+                key={r}
+                onClick={() => setRange(r)}
+                className={`rounded-full px-4 py-1.5 text-sm transition-all ${
+                  range === r
+                    ? "bg-accent text-accent-dark font-semibold"
+                    : "text-muted hover:text-foreground hover:scale-105 active:scale-95"
                 }`}
               >
-                {perfUsd >= 0 ? "+" : ""}
-                {perfUsd.toFixed(2)}%
-              </span>
-              {perfKrw !== null && (
-                <span
-                  className={`text-sm font-semibold ${
-                    perfKrw >= 0 ? "text-[#38c8ff]" : "text-[#d03238]"
-                  }`}
-                >
-                  {perfKrw >= 0 ? "+" : ""}
-                  {perfKrw.toFixed(2)}%
-                </span>
-              )}
-            </div>
-          )}
+                {r}
+              </button>
+            ))}
+          </div>
         </div>
-        <div className="flex gap-2">
-          {ranges.map((r) => (
-            <button
-              key={r}
-              onClick={() => setRange(r)}
-              className={`rounded-full px-4 py-1.5 text-sm transition-all ${
-                range === r
-                  ? "bg-accent text-accent-dark font-semibold"
-                  : "text-muted hover:text-foreground hover:scale-105 active:scale-95"
+        {perfUsd !== null && (
+          <div className="mt-2 flex items-center justify-end gap-2">
+            <span
+              className={`text-sm font-semibold ${
+                perfUsd >= 0 ? "text-[#9fe870]" : "text-[#d03238]"
               }`}
             >
-              {r}
-            </button>
-          ))}
-        </div>
+              {perfUsd >= 0 ? "+" : ""}
+              {perfUsd.toFixed(2)}%
+            </span>
+            {perfKrw !== null && (
+              <span
+                className={`text-sm font-semibold ${
+                  perfKrw >= 0 ? "text-[#38c8ff]" : "text-[#d03238]"
+                }`}
+              >
+                {perfKrw >= 0 ? "+" : ""}
+                {perfKrw.toFixed(2)}%
+              </span>
+            )}
+          </div>
+        )}
       </div>
       <div className="h-48 sm:h-64">
         <ResponsiveContainer width="100%" height="100%">
